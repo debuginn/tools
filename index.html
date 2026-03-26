@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Debuginn Tools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./portal.css" />
+</head>
+<body>
+  <main class="site">
+    <header class="topbar">
+      <div class="nav-shell">
+        <div class="top-pill">
+          <a class="brand" href="#top">
+            <span class="brand-dot"></span>
+            <span>Debuginn Tools</span>
+          </a>
+          <nav class="nav">
+            <a href="#tools">工具</a>
+            <a href="./screenshot-layout-builder/index.html">第一个工具</a>
+          </nav>
+          <a class="top-cta" href="./screenshot-layout-builder/index.html">立即体验</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero" id="top">
+      <div class="hero-copy">
+        <p class="kicker">Tools Portal</p>
+        <h1>好用的工具，<br/>直接开箱即用。</h1>
+        <p class="lead">
+          一个专注实用性的工具站。
+          首页只保留必要信息，点开就能开始用。
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-solid" href="./screenshot-layout-builder/index.html">打开第一个工具</a>
+          <a class="btn btn-ghost" href="#tools">查看工具</a>
+        </div>
+      </div>
+      <div class="hero-panel">
+        <div class="hero-card">
+          <div class="hero-card-head">
+            <span class="chip">Live</span>
+            <span class="chip chip-soft">v1.0</span>
+          </div>
+          <h3>Screenshot Layout Builder</h3>
+          <p>上传截图、改文案、改背景、取色，实时预览并导出 PNG。</p>
+          <a href="./screenshot-layout-builder/index.html">进入工具</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="tools">
+      <div class="section-head">
+        <p class="section-kicker">Tools</p>
+        <h2>当前工具</h2>
+      </div>
+      <div class="tool-grid" aria-label="tools">
+        <article class="tool-card tool-card-primary">
+          <div class="tool-meta">
+            <span class="tag">01</span>
+            <span class="status">可用</span>
+          </div>
+          <h3>Screenshot Layout Builder</h3>
+          <p>卡片化设计，适合宣传图、社媒封面和功能展示。</p>
+          <ul>
+            <li>上传截图</li>
+            <li>自定义主副标题</li>
+            <li>背景色 + 取色器</li>
+            <li>导出 1:1 PNG</li>
+          </ul>
+          <a class="tool-link" href="./screenshot-layout-builder/index.html">打开工具</a>
+        </article>
+
+        <article class="tool-card">
+          <div class="tool-meta">
+            <span class="tag">02</span>
+            <span class="status status-muted">规划中</span>
+          </div>
+          <h3>More Tools Soon</h3>
+          <p>预留给下一个子工具。确定方向后，这里会直接上线新入口。</p>
+          <ul>
+            <li>批量海报生成</li>
+            <li>图文模板工厂</li>
+            <li>多平台导出尺寸</li>
+          </ul>
+          <span class="tool-link tool-link-muted">敬请期待</span>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>© 2026 Debuginn Tools</span>
+      <a href="#top">返回顶部</a>
+    </footer>
+  </main>
+</body>
+</html>

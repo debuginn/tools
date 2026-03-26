@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Screenshot Layout Builder</title>
+  <link rel="stylesheet" href="./app.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="panel">
+      <h1>Screenshot Layout Builder</h1>
+      <p>上传截图、编辑文案、改背景色，实时预览并导出正方形宣传图。</p>
+
+      <div class="field">
+        <label for="imageInput">截图图片</label>
+        <input id="imageInput" type="file" accept="image/*" />
+      </div>
+
+      <div class="field">
+        <label for="titleInput">主标题</label>
+        <input id="titleInput" type="text" value="总览" />
+      </div>
+
+      <div class="field">
+        <label for="subtitleInput">副标题</label>
+        <textarea id="subtitleInput">清晰呈现你的资产全貌</textarea>
+      </div>
+
+      <div class="field">
+        <label for="bgInput">背景色</label>
+        <div class="row">
+          <input id="bgInput" type="color" value="#ffffff" />
+          <input id="bgHexInput" type="text" value="#ffffff" />
+          <button id="pickColorBtn" class="pick-btn" type="button">取色</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="gradientSelect">标题配色方案</label>
+        <select id="gradientSelect">
+          <option value="cool" selected>冷色炫彩</option>
+          <option value="warm">暖色炫彩</option>
+          <option value="ocean">海蓝渐变</option>
+          <option value="mono">深色单色</option>
+        </select>
+      </div>
+
+      <div class="btns">
+        <button id="downloadBtn" class="btn btn-primary" type="button">导出 PNG</button>
+      </div>
+    </aside>
+
+    <main class="preview-wrap">
+      <canvas id="preview" width="1080" height="1080"></canvas>
+    </main>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
