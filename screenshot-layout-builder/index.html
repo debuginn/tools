@@ -3,57 +3,177 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Screenshot Layout Builder</title>
+  <title>小红书微信截图分享海报</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./app.css" />
 </head>
 <body>
-  <div class="app">
-    <aside class="panel">
-      <h1>Screenshot Layout Builder</h1>
-      <p>上传截图、编辑文案、改背景色，实时预览并导出正方形宣传图。</p>
-
-      <div class="field">
-        <label for="imageInput">截图图片</label>
-        <input id="imageInput" type="file" accept="image/*" />
+  <main class="shell">
+    <header class="topbar">
+      <div class="top-pill">
+        <div class="brand-block">
+          <span class="terminal-prefix">ready ~/tools</span>
+          <span class="brand">screenshot-layout-builder</span>
+        </div>
+        <a class="home-link" href="../index.html">返回首页</a>
       </div>
+    </header>
 
-      <div class="field">
-        <label for="titleInput">主标题</label>
-        <input id="titleInput" type="text" value="总览" />
+    <div class="app">
+      <aside class="panel">
+        <div class="panel-bar" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <p class="panel-path">$ config: /builder/share-poster</p>
+        <h1>小红书微信截图分享海报</h1>
+        <p class="panel-desc">上传截图、编辑文案、调整背景和标题配色，实时预览并导出方形分享图。</p>
+
+        <div class="field">
+          <label for="imageInput">截图图片</label>
+          <div class="upload-control">
+            <input id="imageInput" class="sr-only-input" type="file" accept="image/*" />
+            <label for="imageInput" class="upload-trigger">选择截图文件</label>
+            <span id="imageFileName" class="upload-file-name">未选择文件</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="titleInput">主标题</label>
+          <input id="titleInput" type="text" value="总览" />
+        </div>
+
+        <div class="field">
+          <label for="subtitleInput">副标题</label>
+          <textarea id="subtitleInput">清晰呈现你的资产全貌</textarea>
+        </div>
+
+        <div class="field">
+          <label for="bgInput">背景色</label>
+          <div class="visually-hidden-color-inputs" aria-hidden="true">
+            <input id="bgInput" type="color" value="#ffffff" tabindex="-1" />
+            <input id="bgHexInput" type="text" value="#ffffff" tabindex="-1" />
+          </div>
+          <div class="scheme-grid" aria-label="背景色方案">
+            <button class="scheme-btn bg-btn is-active" type="button" data-bg="#ffffff" aria-label="白色背景">
+              <span class="scheme-swatch scheme-swatch-bg-white"></span>
+            </button>
+            <button class="scheme-btn bg-btn" type="button" data-bg="#eef2f7" aria-label="浅灰背景">
+              <span class="scheme-swatch scheme-swatch-bg-gray"></span>
+            </button>
+            <button class="scheme-btn bg-btn" type="button" data-bg="#f7f0e8" aria-label="米色背景">
+              <span class="scheme-swatch scheme-swatch-bg-cream"></span>
+            </button>
+            <button class="scheme-btn bg-btn" type="button" data-bg="#111827" aria-label="深色背景">
+              <span class="scheme-swatch scheme-swatch-bg-dark"></span>
+            </button>
+            <button id="pickColorBtn" class="scheme-btn bg-btn bg-picker-btn" type="button" aria-label="自定义颜色">
+              <span id="customBgSwatch" class="scheme-swatch scheme-swatch-custom"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="gradientSelect">标题配色方案</label>
+          <select id="gradientSelect" class="visually-hidden-select" aria-hidden="true" tabindex="-1">
+            <option value="cool" selected>冷色炫彩</option>
+            <option value="warm">暖色炫彩</option>
+            <option value="ocean">海蓝渐变</option>
+            <option value="mono">深色单色</option>
+          </select>
+          <div class="scheme-grid" aria-label="标题配色方案">
+            <button class="scheme-btn is-active" type="button" data-scheme="cool" aria-label="冷色炫彩">
+              <span class="scheme-swatch scheme-swatch-cool"></span>
+            </button>
+            <button class="scheme-btn" type="button" data-scheme="warm" aria-label="暖色炫彩">
+              <span class="scheme-swatch scheme-swatch-warm"></span>
+            </button>
+            <button class="scheme-btn" type="button" data-scheme="ocean" aria-label="海蓝渐变">
+              <span class="scheme-swatch scheme-swatch-ocean"></span>
+            </button>
+            <button class="scheme-btn" type="button" data-scheme="mono" aria-label="深色单色">
+              <span class="scheme-swatch scheme-swatch-mono"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="btns">
+          <button id="downloadBtn" class="btn btn-primary" type="button">导出 PNG</button>
+        </div>
+      </aside>
+
+      <section class="preview-wrap">
+        <div class="preview-bar" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <p class="preview-path">$ preview: live-canvas</p>
+        <div class="canvas-shell">
+          <canvas id="preview" width="1080" height="1080"></canvas>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <span>© 2026 Debuginn Tools</span>
+      <a href="../index.html">返回首页</a>
+    </footer>
+  </main>
+
+  <div id="colorModal" class="modal" hidden>
+    <div class="modal-backdrop" data-close-modal="true"></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="colorModalTitle">
+      <div class="modal-bar" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
-
-      <div class="field">
-        <label for="subtitleInput">副标题</label>
-        <textarea id="subtitleInput">清晰呈现你的资产全貌</textarea>
+      <p class="modal-path">$ background: custom-color</p>
+      <div class="modal-head">
+        <h2 id="colorModalTitle">选择背景色</h2>
+        <button id="closeColorModalBtn" class="modal-close" type="button" aria-label="关闭">关闭</button>
       </div>
-
-      <div class="field">
-        <label for="bgInput">背景色</label>
-        <div class="row">
-          <input id="bgInput" type="color" value="#ffffff" />
-          <input id="bgHexInput" type="text" value="#ffffff" />
-          <button id="pickColorBtn" class="pick-btn" type="button">取色</button>
+      <div class="modal-preview">
+        <span id="modalColorPreview" class="modal-preview-swatch"></span>
+        <span id="modalColorValue" class="modal-preview-value">#ffffff</span>
+      </div>
+      <div class="modal-section">
+        <span class="modal-label">预设颜色</span>
+        <div class="scheme-grid modal-scheme-grid" aria-label="背景预设颜色">
+          <button class="scheme-btn modal-bg-btn" type="button" data-modal-bg="#ffffff" aria-label="白色背景">
+            <span class="scheme-swatch scheme-swatch-bg-white"></span>
+          </button>
+          <button class="scheme-btn modal-bg-btn" type="button" data-modal-bg="#eef2f7" aria-label="浅灰背景">
+            <span class="scheme-swatch scheme-swatch-bg-gray"></span>
+          </button>
+          <button class="scheme-btn modal-bg-btn" type="button" data-modal-bg="#f7f0e8" aria-label="米色背景">
+            <span class="scheme-swatch scheme-swatch-bg-cream"></span>
+          </button>
+          <button class="scheme-btn modal-bg-btn" type="button" data-modal-bg="#111827" aria-label="深色背景">
+            <span class="scheme-swatch scheme-swatch-bg-dark"></span>
+          </button>
+          <button class="scheme-btn modal-bg-btn" type="button" data-modal-bg="#dbeafe" aria-label="浅蓝背景">
+            <span class="scheme-swatch scheme-swatch-bg-sky"></span>
+          </button>
+          <button class="scheme-btn modal-bg-btn" type="button" data-modal-bg="#fde68a" aria-label="浅金背景">
+            <span class="scheme-swatch scheme-swatch-bg-gold"></span>
+          </button>
         </div>
       </div>
-
-      <div class="field">
-        <label for="gradientSelect">标题配色方案</label>
-        <select id="gradientSelect">
-          <option value="cool" selected>冷色炫彩</option>
-          <option value="warm">暖色炫彩</option>
-          <option value="ocean">海蓝渐变</option>
-          <option value="mono">深色单色</option>
-        </select>
+      <div class="modal-section">
+        <label class="modal-label" for="modalHexInput">HEX</label>
+        <input id="modalHexInput" class="modal-input" type="text" value="#ffffff" />
       </div>
-
-      <div class="btns">
-        <button id="downloadBtn" class="btn btn-primary" type="button">导出 PNG</button>
+      <div class="modal-actions">
+        <button id="modalEyedropperBtn" class="modal-btn modal-btn-secondary" type="button">拾色器</button>
+        <button id="applyColorBtn" class="modal-btn modal-btn-primary" type="button">应用颜色</button>
       </div>
-    </aside>
-
-    <main class="preview-wrap">
-      <canvas id="preview" width="1080" height="1080"></canvas>
-    </main>
+    </div>
   </div>
 
   <script src="./app.js"></script>

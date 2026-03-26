@@ -4,92 +4,98 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Debuginn Tools</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./portal.css" />
 </head>
 <body>
+  <svg class="logo-defs" aria-hidden="true" focusable="false" width="0" height="0">
+    <defs>
+      <linearGradient id="logoBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#38d7ff" />
+        <stop offset="100%" stop-color="#1166ff" />
+      </linearGradient>
+      <linearGradient id="logoBlueSoft" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#2fe0ff" />
+        <stop offset="100%" stop-color="#1a7fff" />
+      </linearGradient>
+      <symbol id="bug-shield-logo" viewBox="0 0 256 256">
+        <g fill="none" stroke="url(#logoBlue)" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M46 88c18-27 43-46 74-56" stroke-width="8"/>
+          <path d="M210 90c-12-24-34-42-60-54" stroke-width="8"/>
+          <path d="M34 128c0 46 25 79 67 93" stroke-width="8"/>
+          <path d="M222 128c0 44-22 76-63 92" stroke-width="8"/>
+          <path d="M48 110h40" stroke-width="8"/>
+          <path d="M168 110h40" stroke-width="8"/>
+          <path d="M42 110l-12 0" stroke-width="6"/>
+          <path d="M214 110l12 0" stroke-width="6"/>
+          <path d="M92 48l-14-20" stroke-width="7"/>
+          <path d="M164 48l14-20" stroke-width="7"/>
+          <path d="M74 154l-18 28" stroke-width="8"/>
+          <path d="M182 154l18 28" stroke-width="8"/>
+        </g>
+        <g fill="url(#logoBlueSoft)">
+          <circle cx="28" cy="110" r="7"/>
+          <circle cx="228" cy="110" r="7"/>
+          <circle cx="76" cy="26" r="5"/>
+          <circle cx="178" cy="26" r="5"/>
+        </g>
+        <path d="M128 54c18 0 35 6 48 16v46c0 31-18 58-48 77-30-19-48-46-48-77V70c13-10 30-16 48-16z" fill="url(#logoBlueSoft)"/>
+        <path d="M128 54v139" stroke="#0b1d52" stroke-width="7" stroke-linecap="round"/>
+        <path d="M128 79l33 14v32c0 18-11 35-33 53-22-18-33-35-33-53V93l33-14z" fill="none" stroke="#0b1d52" stroke-width="6" stroke-linejoin="round"/>
+        <path d="M196 112l22 14-22 14" fill="none" stroke="url(#logoBlue)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M60 128h26" fill="none" stroke="url(#logoBlue)" stroke-width="8" stroke-linecap="round"/>
+      </symbol>
+    </defs>
+  </svg>
   <main class="site">
     <header class="topbar">
       <div class="nav-shell">
         <div class="top-pill">
-          <a class="brand" href="#top">
-            <span class="brand-dot"></span>
-            <span>Debuginn Tools</span>
+          <span class="terminal-prefix">ready ~/</span>
+          <a class="brand" href="#top" aria-label="Debuginn Tools">
+            <svg class="brand-logo" viewBox="0 0 256 256" aria-hidden="true">
+              <use href="#bug-shield-logo"></use>
+            </svg>
+            <span>tools</span>
           </a>
-          <nav class="nav">
-            <a href="#tools">工具</a>
-            <a href="./screenshot-layout-builder/index.html">第一个工具</a>
-          </nav>
-          <a class="top-cta" href="./screenshot-layout-builder/index.html">立即体验</a>
         </div>
       </div>
     </header>
 
     <section class="hero" id="top">
-      <div class="hero-copy">
-        <p class="kicker">Tools Portal</p>
-        <h1>好用的工具，<br/>直接开箱即用。</h1>
+      <article class="portal-card">
+        <div class="card-bar" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <p class="card-path">$ pwd: ~/tools/screenshot-layout-builder</p>
+        <div class="tool-mark" aria-hidden="true">
+          <span class="tool-mark-badge">
+            <svg class="tool-mark-logo" viewBox="0 0 256 256">
+              <rect x="36" y="44" width="184" height="168" rx="34" fill="none" stroke="url(#logoBlue)" stroke-width="12"/>
+              <rect x="60" y="68" width="136" height="92" rx="20" fill="url(#logoBlueSoft)" opacity="0.22"/>
+              <path d="M78 142l28-30 24 22 24-28 24 36" fill="none" stroke="url(#logoBlue)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="98" cy="96" r="10" fill="url(#logoBlueSoft)"/>
+              <path d="M76 182h104" fill="none" stroke="url(#logoBlue)" stroke-width="10" stroke-linecap="round"/>
+              <path d="M76 202h74" fill="none" stroke="url(#logoBlue)" stroke-width="10" stroke-linecap="round" opacity="0.82"/>
+              <path d="M196 88v92" fill="none" stroke="url(#logoBlue)" stroke-width="10" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="tool-mark-label">小红书微信截图分享海报</span>
+        </div>
+        <p class="eyebrow"># &gt; Tool Overview</p>
         <p class="lead">
-          一个专注实用性的工具站。
-          首页只保留必要信息，点开就能开始用。
+          一个偏终端风格的轻量设计工具，用来把截图快速整理成更适合分享的方形宣传图。
+          你可以上传截图、修改标题文案、调整背景颜色，然后直接导出 PNG。
         </p>
         <div class="hero-actions">
-          <a class="btn btn-solid" href="./screenshot-layout-builder/index.html">打开第一个工具</a>
-          <a class="btn btn-ghost" href="#tools">查看工具</a>
+          <a class="btn btn-solid" href="./screenshot-layout-builder/index.html">$ open tool</a>
         </div>
-      </div>
-      <div class="hero-panel">
-        <div class="hero-card">
-          <div class="hero-card-head">
-            <span class="chip">Live</span>
-            <span class="chip chip-soft">v1.0</span>
-          </div>
-          <h3>Screenshot Layout Builder</h3>
-          <p>上传截图、改文案、改背景、取色，实时预览并导出 PNG。</p>
-          <a href="./screenshot-layout-builder/index.html">进入工具</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="tools">
-      <div class="section-head">
-        <p class="section-kicker">Tools</p>
-        <h2>当前工具</h2>
-      </div>
-      <div class="tool-grid" aria-label="tools">
-        <article class="tool-card tool-card-primary">
-          <div class="tool-meta">
-            <span class="tag">01</span>
-            <span class="status">可用</span>
-          </div>
-          <h3>Screenshot Layout Builder</h3>
-          <p>卡片化设计，适合宣传图、社媒封面和功能展示。</p>
-          <ul>
-            <li>上传截图</li>
-            <li>自定义主副标题</li>
-            <li>背景色 + 取色器</li>
-            <li>导出 1:1 PNG</li>
-          </ul>
-          <a class="tool-link" href="./screenshot-layout-builder/index.html">打开工具</a>
-        </article>
-
-        <article class="tool-card">
-          <div class="tool-meta">
-            <span class="tag">02</span>
-            <span class="status status-muted">规划中</span>
-          </div>
-          <h3>More Tools Soon</h3>
-          <p>预留给下一个子工具。确定方向后，这里会直接上线新入口。</p>
-          <ul>
-            <li>批量海报生成</li>
-            <li>图文模板工厂</li>
-            <li>多平台导出尺寸</li>
-          </ul>
-          <span class="tool-link tool-link-muted">敬请期待</span>
-        </article>
-      </div>
+      </article>
     </section>
 
     <footer class="footer">

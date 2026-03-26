@@ -2,15 +2,28 @@ const previewCanvas = document.getElementById("preview");
 const ctx = previewCanvas.getContext("2d");
 
 const imageInput = document.getElementById("imageInput");
+const imageFileName = document.getElementById("imageFileName");
 const titleInput = document.getElementById("titleInput");
 const subtitleInput = document.getElementById("subtitleInput");
 const bgInput = document.getElementById("bgInput");
 const bgHexInput = document.getElementById("bgHexInput");
+const colorModal = document.getElementById("colorModal");
+const modalHexInput = document.getElementById("modalHexInput");
+const modalColorPreview = document.getElementById("modalColorPreview");
+const modalColorValue = document.getElementById("modalColorValue");
+const modalBgButtons = document.querySelectorAll(".modal-bg-btn");
+const closeColorModalBtn = document.getElementById("closeColorModalBtn");
+const modalEyedropperBtn = document.getElementById("modalEyedropperBtn");
+const applyColorBtn = document.getElementById("applyColorBtn");
+const customBgSwatch = document.getElementById("customBgSwatch");
+const backgroundButtons = document.querySelectorAll(".bg-btn");
 const gradientSelect = document.getElementById("gradientSelect");
+const schemeButtons = document.querySelectorAll(".scheme-btn[data-scheme]");
 const pickColorBtn = document.getElementById("pickColorBtn");
 const downloadBtn = document.getElementById("downloadBtn");
 
 let screenshotImage = null;
+let modalBackgroundColor = "#ffffff";
 
 const gradients = {
   cool: ["#4CC9F0", "#3A86FF", "#7B61FF", "#5EEAD4"],
@@ -70,9 +83,58 @@ function wrapText(context, text, x, y, maxWidth, lineHeight) {
   if (line) context.fillText(line, x, drawY);
 }
 
+function syncSchemeButtons() {
+  schemeButtons.forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.scheme === gradientSelect.value);
+  });
+}
+
+function syncBackgroundButtons() {
+  const currentColor = normalizeHex(bgHexInput.value) || "#ffffff";
+  let matchedPreset = false;
+
+  backgroundButtons.forEach((button) => {
+    const preset = button.dataset.bg;
+    const isMatch = preset === currentColor;
+    button.classList.toggle("is-active", isMatch);
+    if (isMatch) matchedPreset = true;
+  });
+
+  if (customBgSwatch) {
+    customBgSwatch.style.background = matchedPreset
+      ? ""
+      : currentColor;
+    customBgSwatch.classList.toggle("is-custom-color", !matchedPreset);
+  }
+}
+
+function syncModalButtons() {
+  modalBgButtons.forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.modalBg === modalBackgroundColor);
+  });
+}
+
+function updateModalPreview(color) {
+  modalBackgroundColor = normalizeHex(color) || "#ffffff";
+  modalHexInput.value = modalBackgroundColor;
+  modalColorPreview.style.background = modalBackgroundColor;
+  modalColorValue.textContent = modalBackgroundColor;
+  syncModalButtons();
+}
+
+function openColorModal() {
+  updateModalPreview(normalizeHex(bgHexInput.value) || "#ffffff");
+  colorModal.hidden = false;
+}
+
+function closeColorModal() {
+  colorModal.hidden = true;
+}
+
 function render() {
   const bgColor = normalizeHex(bgHexInput.value) || "#ffffff";
   bgInput.value = bgColor;
+  syncBackgroundButtons();
 
   ctx.clearRect(0, 0, 1080, 1080);
   ctx.fillStyle = bgColor;
@@ -136,12 +198,21 @@ function readImage(file) {
 
 imageInput.addEventListener("change", (event) => {
   const [file] = event.target.files || [];
+  imageFileName.textContent = file ? file.name : "未选择文件";
   if (file) readImage(file);
 });
 
 [titleInput, subtitleInput, gradientSelect].forEach((el) => {
   el.addEventListener("input", render);
   el.addEventListener("change", render);
+});
+
+schemeButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    gradientSelect.value = button.dataset.scheme;
+    syncSchemeButtons();
+    render();
+  });
 });
 
 bgInput.addEventListener("input", () => {
@@ -151,23 +222,64 @@ bgInput.addEventListener("input", () => {
 
 bgHexInput.addEventListener("input", render);
 
-if (!("EyeDropper" in window)) {
-  pickColorBtn.disabled = true;
-  pickColorBtn.title = "当前浏览器不支持取色器";
-} else {
-  pickColorBtn.addEventListener("click", async () => {
-    try {
-      const eyeDropper = new EyeDropper();
-      const result = await eyeDropper.open();
-      if (result && result.sRGBHex) {
-        bgHexInput.value = result.sRGBHex.toLowerCase();
-        render();
-      }
-    } catch (error) {
-      // User cancel is expected.
-    }
+backgroundButtons.forEach((button) => {
+  if (button === pickColorBtn) return;
+  button.addEventListener("click", () => {
+    bgHexInput.value = button.dataset.bg;
+    render();
   });
-}
+});
+
+pickColorBtn.addEventListener("click", () => {
+  openColorModal();
+});
+
+modalBgButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    updateModalPreview(button.dataset.modalBg);
+  });
+});
+
+modalHexInput.addEventListener("input", () => {
+  const color = normalizeHex(modalHexInput.value);
+  if (color) updateModalPreview(color);
+});
+
+closeColorModalBtn.addEventListener("click", closeColorModal);
+
+colorModal.addEventListener("click", (event) => {
+  if (event.target.dataset.closeModal === "true") {
+    closeColorModal();
+  }
+});
+
+modalEyedropperBtn.addEventListener("click", async () => {
+  if (!("EyeDropper" in window)) {
+    if (typeof bgInput.showPicker === "function") {
+      bgInput.showPicker();
+    } else {
+      bgInput.click();
+    }
+    return;
+  }
+
+  try {
+    const eyeDropper = new EyeDropper();
+    const result = await eyeDropper.open();
+    if (result && result.sRGBHex) {
+      updateModalPreview(result.sRGBHex.toLowerCase());
+    }
+  } catch (error) {
+    // User cancel is expected.
+  }
+});
+
+applyColorBtn.addEventListener("click", () => {
+  bgHexInput.value = modalBackgroundColor;
+  bgInput.value = modalBackgroundColor;
+  closeColorModal();
+  render();
+});
 
 downloadBtn.addEventListener("click", () => {
   const link = document.createElement("a");
@@ -176,4 +288,5 @@ downloadBtn.addEventListener("click", () => {
   link.click();
 });
 
+syncSchemeButtons();
 render();
