@@ -16,7 +16,7 @@
       <div class="top-pill">
         <div class="brand-block">
           <span class="terminal-prefix">ready ~/tools</span>
-          <span class="brand">screenshot-layout-builder</span>
+          <span class="brand">debuginn-wx-xhs-poster</span>
         </div>
         <a class="home-link" href="../index.html">返回首页</a>
       </div>
@@ -34,26 +34,19 @@
         <p class="panel-desc">上传截图、编辑文案、调整背景和标题配色，实时预览并导出方形分享图。</p>
 
         <div class="field">
-          <label for="imageInput">截图图片</label>
-          <div class="upload-control">
-            <input id="imageInput" class="sr-only-input" type="file" accept="image/*" />
-            <label for="imageInput" class="upload-trigger">选择截图文件</label>
-            <span id="imageFileName" class="upload-file-name">未选择文件</span>
+          <label for="sizeSelect">尺寸比例</label>
+          <select id="sizeSelect" class="visually-hidden-select" aria-hidden="true" tabindex="-1">
+            <option value="square" selected>1:1 微信</option>
+            <option value="xhs">3:4 小红书</option>
+          </select>
+          <div class="scheme-grid" aria-label="尺寸比例">
+            <button class="scheme-btn size-btn is-active" type="button" data-size="square">1:1 微信</button>
+            <button class="scheme-btn size-btn" type="button" data-size="xhs">3:4 小红书</button>
           </div>
         </div>
 
         <div class="field">
-          <label for="titleInput">主标题</label>
-          <input id="titleInput" type="text" value="总览" />
-        </div>
-
-        <div class="field">
-          <label for="subtitleInput">副标题</label>
-          <textarea id="subtitleInput">清晰呈现你的资产全貌</textarea>
-        </div>
-
-        <div class="field">
-          <label for="bgInput">背景色</label>
+          <label>背景色</label>
           <div class="visually-hidden-color-inputs" aria-hidden="true">
             <input id="bgInput" type="color" value="#ffffff" tabindex="-1" />
             <input id="bgHexInput" type="text" value="#ffffff" tabindex="-1" />
@@ -78,6 +71,20 @@
         </div>
 
         <div class="field">
+          <label for="imageInput">截图图片</label>
+          <div class="upload-control">
+            <input id="imageInput" class="sr-only-input" type="file" accept="image/*" />
+            <label for="imageInput" class="upload-trigger">选择截图文件</label>
+            <span id="imageFileName" class="upload-file-name">未选择文件</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="titleInput">主标题</label>
+          <input id="titleInput" type="text" value="总览" />
+        </div>
+
+        <div class="field">
           <label for="gradientSelect">标题配色方案</label>
           <select id="gradientSelect" class="visually-hidden-select" aria-hidden="true" tabindex="-1">
             <option value="cool" selected>冷色炫彩</option>
@@ -99,6 +106,11 @@
               <span class="scheme-swatch scheme-swatch-mono"></span>
             </button>
           </div>
+        </div>
+
+        <div class="field">
+          <label for="subtitleInput">副标题</label>
+          <input id="subtitleInput" type="text" value="清晰呈现你的资产全貌" />
         </div>
 
         <div class="btns">

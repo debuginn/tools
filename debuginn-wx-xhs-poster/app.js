@@ -1,8 +1,12 @@
 const previewCanvas = document.getElementById("preview");
 const ctx = previewCanvas.getContext("2d");
+const EXPORT_SCALE = 2;
+const PREVIEW_MAX_SIDE = 720;
 
 const imageInput = document.getElementById("imageInput");
 const imageFileName = document.getElementById("imageFileName");
+const sizeSelect = document.getElementById("sizeSelect");
+const sizeButtons = document.querySelectorAll(".size-btn[data-size]");
 const titleInput = document.getElementById("titleInput");
 const subtitleInput = document.getElementById("subtitleInput");
 const bgInput = document.getElementById("bgInput");
@@ -31,6 +35,30 @@ const gradients = {
   ocean: ["#38BDF8", "#0EA5E9", "#2563EB", "#22D3EE"],
   mono: ["#111827", "#1F2937", "#374151", "#111827"]
 };
+
+const layoutPresets = {
+  square: {
+    width: 1080,
+    height: 1080,
+    screenshotBox: { x: 86, y: 96, w: 458, h: 900, r: 54 },
+    title: { x: 612, y: 438, fontSize: 110 },
+    subtitle: { x: 612, y: 560, maxWidth: 400, lineHeight: 34, fontSize: 24 },
+    placeholder: { x: 238, y: 540 }
+  },
+  xhs: {
+    width: 1080,
+    height: 1440,
+    screenshotBox: { x: 72, y: 138, w: 592, h: 1164, r: 64 },
+    title: { x: 700, y: 610, fontSize: 110 },
+    subtitle: { x: 700, y: 732, maxWidth: 320, lineHeight: 34, fontSize: 24 },
+    placeholder: { x: 270, y: 726 }
+  }
+};
+
+function applyDrawingQuality(context) {
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = "high";
+}
 
 function fitRect(srcW, srcH, dstX, dstY, dstW, dstH) {
   const srcRatio = srcW / srcH;
@@ -89,6 +117,12 @@ function syncSchemeButtons() {
   });
 }
 
+function syncSizeButtons() {
+  sizeButtons.forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.size === sizeSelect.value);
+  });
+}
+
 function syncBackgroundButtons() {
   const currentColor = normalizeHex(bgHexInput.value) || "#ffffff";
   let matchedPreset = false;
@@ -131,39 +165,70 @@ function closeColorModal() {
   colorModal.hidden = true;
 }
 
-function render() {
+function getCurrentPreset() {
+  return layoutPresets[sizeSelect.value] || layoutPresets.square;
+}
+
+function updatePreviewCanvasSize(preset) {
+  previewCanvas.width = preset.width;
+  previewCanvas.height = preset.height;
+
+  const widthRatio = preset.width / preset.height;
+  const heightRatio = preset.height / preset.width;
+  const displayWidth = preset.width >= preset.height
+    ? PREVIEW_MAX_SIDE
+    : Math.round(PREVIEW_MAX_SIDE * widthRatio);
+  const displayHeight = preset.height >= preset.width
+    ? PREVIEW_MAX_SIDE
+    : Math.round(PREVIEW_MAX_SIDE * heightRatio);
+
+  previewCanvas.style.width = `${displayWidth}px`;
+  previewCanvas.style.height = "auto";
+  previewCanvas.style.maxHeight = `${displayHeight}px`;
+}
+
+function drawPoster(context, preset, scale = 1) {
   const bgColor = normalizeHex(bgHexInput.value) || "#ffffff";
   bgInput.value = bgColor;
   syncBackgroundButtons();
 
-  ctx.clearRect(0, 0, 1080, 1080);
-  ctx.fillStyle = bgColor;
-  ctx.fillRect(0, 0, 1080, 1080);
+  context.save();
+  context.setTransform(scale, 0, 0, scale, 0, 0);
+  context.clearRect(0, 0, preset.width, preset.height);
+  context.fillStyle = bgColor;
+  context.fillRect(0, 0, preset.width, preset.height);
 
   if (screenshotImage) {
+    const screenshotBox = preset.screenshotBox;
     const target = fitRect(
       screenshotImage.width,
       screenshotImage.height,
-      86, 96, 458, 900
+      screenshotBox.x, screenshotBox.y, screenshotBox.w, screenshotBox.h
     );
-    ctx.save();
-    drawRoundedClip(ctx, 86, 96, 458, 900, 54);
-    ctx.clip();
-    ctx.drawImage(screenshotImage, target.x, target.y, target.w, target.h);
-    ctx.restore();
+    context.save();
+    drawRoundedClip(context, screenshotBox.x, screenshotBox.y, screenshotBox.w, screenshotBox.h, screenshotBox.r);
+    context.clip();
+    context.drawImage(screenshotImage, target.x, target.y, target.w, target.h);
+    context.restore();
   } else {
-    ctx.save();
-    ctx.fillStyle = "#eef2f7";
-    drawRoundedClip(ctx, 86, 96, 458, 900, 54);
-    ctx.fill();
-    ctx.fillStyle = "#9aa3af";
-    ctx.font = "600 28px SF Pro Display, PingFang SC, sans-serif";
-    ctx.fillText("上传截图", 238, 540);
-    ctx.restore();
+    const screenshotBox = preset.screenshotBox;
+    context.save();
+    context.fillStyle = "#eef2f7";
+    drawRoundedClip(context, screenshotBox.x, screenshotBox.y, screenshotBox.w, screenshotBox.h, screenshotBox.r);
+    context.fill();
+    context.fillStyle = "#9aa3af";
+    context.font = "600 28px SF Pro Display, PingFang SC, sans-serif";
+    context.fillText("上传截图", preset.placeholder.x, preset.placeholder.y);
+    context.restore();
   }
 
   const scheme = gradients[gradientSelect.value] || gradients.cool;
-  const titleGradient = ctx.createLinearGradient(612, 438, 850, 560);
+  const titleGradient = context.createLinearGradient(
+    preset.title.x,
+    preset.title.y,
+    preset.title.x + 238,
+    preset.title.y + 122
+  );
   titleGradient.addColorStop(0, scheme[0]);
   titleGradient.addColorStop(0.34, scheme[1]);
   titleGradient.addColorStop(0.68, scheme[2]);
@@ -172,15 +237,30 @@ function render() {
   const title = (titleInput.value || "总览").trim();
   const subtitle = (subtitleInput.value || "").trim();
 
-  ctx.textAlign = "left";
-  ctx.textBaseline = "top";
-  ctx.fillStyle = titleGradient;
-  ctx.font = "700 110px SF Pro Display, PingFang SC, sans-serif";
-  ctx.fillText(title, 612, 438);
+  context.textAlign = "left";
+  context.textBaseline = "top";
+  context.fillStyle = titleGradient;
+  context.font = `700 ${preset.title.fontSize}px SF Pro Display, PingFang SC, sans-serif`;
+  context.fillText(title, preset.title.x, preset.title.y);
 
-  ctx.fillStyle = "#6e6e73";
-  ctx.font = "400 24px SF Pro Display, PingFang SC, sans-serif";
-  wrapText(ctx, subtitle, 612, 560, 400, 34);
+  context.fillStyle = "#6e6e73";
+  context.font = `400 ${preset.subtitle.fontSize}px SF Pro Display, PingFang SC, sans-serif`;
+  wrapText(
+    context,
+    subtitle,
+    preset.subtitle.x,
+    preset.subtitle.y,
+    preset.subtitle.maxWidth,
+    preset.subtitle.lineHeight
+  );
+  context.restore();
+}
+
+function render() {
+  const preset = getCurrentPreset();
+  updatePreviewCanvasSize(preset);
+  applyDrawingQuality(ctx);
+  drawPoster(ctx, preset, 1);
 }
 
 function readImage(file) {
@@ -202,9 +282,17 @@ imageInput.addEventListener("change", (event) => {
   if (file) readImage(file);
 });
 
-[titleInput, subtitleInput, gradientSelect].forEach((el) => {
+[titleInput, subtitleInput, gradientSelect, sizeSelect].forEach((el) => {
   el.addEventListener("input", render);
   el.addEventListener("change", render);
+});
+
+sizeButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    sizeSelect.value = button.dataset.size;
+    syncSizeButtons();
+    render();
+  });
 });
 
 schemeButtons.forEach((button) => {
@@ -282,11 +370,36 @@ applyColorBtn.addEventListener("click", () => {
 });
 
 downloadBtn.addEventListener("click", () => {
+  const preset = getCurrentPreset();
+  const exportCanvas = document.createElement("canvas");
+  const exportWidth = preset.width * EXPORT_SCALE;
+  const exportHeight = preset.height * EXPORT_SCALE;
+  exportCanvas.width = exportWidth;
+  exportCanvas.height = exportHeight;
+
+  const exportCtx = exportCanvas.getContext("2d");
+  if (!exportCtx) return;
+  applyDrawingQuality(exportCtx);
+  drawPoster(exportCtx, preset, EXPORT_SCALE);
+
   const link = document.createElement("a");
-  link.download = "screenshot-layout.png";
-  link.href = previewCanvas.toDataURL("image/png");
+  link.download = `debuginn-wx-xhs-poster-${exportWidth}x${exportHeight}.png`;
+
+  if (exportCanvas.toBlob) {
+    exportCanvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 3000);
+    }, "image/png");
+    return;
+  }
+
+  link.href = exportCanvas.toDataURL("image/png");
   link.click();
 });
 
+syncSizeButtons();
 syncSchemeButtons();
 render();

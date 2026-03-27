@@ -7,7 +7,7 @@ Small web tools and utilities.
 Homepage:
 `index.html`
 
-## screenshot-layout-builder
+## debuginn-wx-xhs-poster
 
 Generate square promo images with:
 - custom screenshot upload
@@ -17,4 +17,4 @@ Generate square promo images with:
 - one-click PNG export
 
 Path:
-`screenshot-layout-builder/`
+`debuginn-wx-xhs-poster/`
