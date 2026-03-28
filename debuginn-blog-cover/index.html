@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blog 主题图生成器</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./app.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="nav-shell">
+        <nav class="top-pill">
+          <div class="pill-left">
+            <a class="logo tool-title" href="./" aria-label="debuginn-blog-cover">
+              <img class="logo-mark" src="../favicon.svg" alt="Debuginn Tools" />
+              <span>debuginn-blog-cover</span>
+            </a>
+          </div>
+          <div class="pill-right">
+            <a class="home-link home-link-icon" href="../" aria-label="返回首页">
+              <span class="sf-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 18.5v-4.2c0-.9.7-1.6 1.6-1.6h2.8c.9 0 1.6.7 1.6 1.6v4.2"></path>
+                  <path d="M4.8 10.5L12 4.8l7.2 5.7"></path>
+                  <path d="M6.4 9.3v9.1c0 .9.7 1.6 1.6 1.6h8c.9 0 1.6-.7 1.6-1.6V9.3"></path>
+                </svg>
+              </span>
+            </a>
+            <button id="themeToggleBtn" class="mode-btn" type="button" aria-label="Switch theme">◐</button>
+            <div class="header-lang-dropdown">
+              <button id="langToggleBtn" class="header-lang-trigger" type="button" aria-label="Switch language" aria-haspopup="listbox" aria-expanded="false">
+                <span class="header-lang-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M3 12h18"></path>
+                    <path d="M12 3c2.6 2.4 4 5.6 4 9s-1.4 6.6-4 9c-2.6-2.4-4-5.6-4-9s1.4-6.6 4-9z"></path>
+                  </svg>
+                </span>
+                <span class="header-lang-current">中文</span>
+              </button>
+              <div class="header-lang-menu" role="listbox" aria-label="Language options">
+                <button type="button" data-lang-option="zh" class="active">中文</button>
+                <button type="button" data-lang-option="en">EN</button>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="app">
+      <aside class="panel">
+        <div class="panel-bar" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <p class="panel-path" data-i18n="panelPath">$ config: /builder/debuginn-blog-cover</p>
+        <h1 data-i18n="panelTitle">Blog 主题图生成器</h1>
+        <p class="panel-desc" data-i18n="panelDesc">上传 Logo、输入标题，快速生成带有中心图标和发光背景的 blog 封面图。</p>
+
+        <div class="field">
+          <label for="imageInput" data-i18n="imageLabel">中心图标</label>
+          <div class="upload-control">
+            <input id="imageInput" class="sr-only-input" type="file" accept="image/*" />
+            <label for="imageInput" class="upload-trigger" data-i18n="chooseFile">选择图标文件</label>
+            <span id="imageFileName" class="upload-file-name" data-empty-zh="未选择文件" data-empty-en="No file selected">未选择文件</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="titleInput" data-i18n="titleLabel">主标题</label>
+          <input id="titleInput" type="text" value="蚂蚁银行" />
+        </div>
+
+        <div class="field">
+          <label data-i18n="accentLabel">主题色</label>
+          <input id="accentInput" class="sr-only-input" type="color" value="#3a66ff" />
+          <div class="scheme-grid" aria-label="主题色方案">
+            <button class="scheme-btn accent-btn is-active" type="button" data-accent="#3a66ff" aria-label="蓝色主题">
+              <span class="scheme-swatch scheme-swatch-accent-blue"></span>
+            </button>
+            <button class="scheme-btn accent-btn" type="button" data-accent="#6d4aff" aria-label="紫色主题">
+              <span class="scheme-swatch scheme-swatch-accent-violet"></span>
+            </button>
+            <button class="scheme-btn accent-btn" type="button" data-accent="#12b3a8" aria-label="青绿色主题">
+              <span class="scheme-swatch scheme-swatch-accent-teal"></span>
+            </button>
+            <button class="scheme-btn accent-btn" type="button" data-accent="#ff7a45" aria-label="橙色主题">
+              <span class="scheme-swatch scheme-swatch-accent-orange"></span>
+            </button>
+            <button id="pickAccentBtn" class="scheme-btn accent-btn accent-picker-btn" type="button" aria-label="自定义主题色">
+              <span id="customAccentSwatch" class="scheme-swatch scheme-swatch-custom"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="glowInput" data-i18n="glowLabel">发光强度</label>
+          <input id="glowInput" type="range" min="20" max="100" value="68" />
+        </div>
+
+        <div class="field">
+          <label for="trackingInput" data-i18n="trackingLabel">主标题字间距</label>
+          <input id="trackingInput" type="range" min="0" max="72" value="18" />
+        </div>
+
+        <div class="btns">
+          <button id="downloadBtn" class="btn btn-primary" type="button" data-i18n="downloadPng">导出 PNG</button>
+        </div>
+      </aside>
+
+      <section class="preview-wrap">
+        <div class="preview-bar" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <p class="preview-path" data-i18n="previewPath">$ preview: blog-cover</p>
+        <div class="canvas-shell">
+          <canvas id="preview" width="1600" height="900"></canvas>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <span>© 2026 Debuginn Tools</span>
+      <a href="../" data-i18n="backHome">返回首页</a>
+    </footer>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

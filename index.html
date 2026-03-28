@@ -53,55 +53,105 @@
   <main class="site">
     <header class="topbar">
       <div class="nav-shell">
-        <div class="top-pill">
-          <span class="terminal-prefix">ready ~/</span>
-          <a class="brand" href="#top" aria-label="Debuginn Tools">
-            <svg class="brand-logo" viewBox="0 0 256 256" aria-hidden="true">
-              <use href="#bug-shield-logo"></use>
-            </svg>
-            <span>tools</span>
-          </a>
-        </div>
+        <nav class="top-pill">
+          <div class="pill-left">
+            <a class="logo" href="#top" aria-label="Debuginn Tools">
+              <svg class="logo-mark" viewBox="0 0 256 256" aria-hidden="true">
+                <use href="#bug-shield-logo"></use>
+              </svg>
+              <span>DebuginnTools</span>
+            </a>
+          </div>
+          <div class="pill-right">
+            <button id="themeToggleBtn" class="mode-btn" type="button" aria-label="Switch theme">◐</button>
+            <div class="header-lang-dropdown">
+              <button id="langToggleBtn" class="header-lang-trigger" type="button" aria-label="Switch language" aria-haspopup="listbox" aria-expanded="false">
+                <span class="header-lang-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M3 12h18"></path>
+                    <path d="M12 3c2.6 2.4 4 5.6 4 9s-1.4 6.6-4 9c-2.6-2.4-4-5.6-4-9s1.4-6.6 4-9z"></path>
+                  </svg>
+                </span>
+                <span class="header-lang-current">中文</span>
+              </button>
+              <div class="header-lang-menu" role="listbox" aria-label="Language options">
+                <button type="button" data-lang-option="zh" class="active">中文</button>
+                <button type="button" data-lang-option="en">EN</button>
+              </div>
+            </div>
+          </div>
+        </nav>
       </div>
     </header>
 
     <section class="hero" id="top">
-      <article class="portal-card">
-        <div class="card-bar" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <p class="card-path">$ pwd: ~/tools/debuginn-wx-xhs-poster</p>
-        <div class="tool-mark" aria-hidden="true">
-          <span class="tool-mark-badge">
-            <svg class="tool-mark-logo" viewBox="0 0 256 256">
-              <rect x="36" y="44" width="184" height="168" rx="34" fill="none" stroke="url(#logoBlue)" stroke-width="12"/>
-              <rect x="60" y="68" width="136" height="92" rx="20" fill="url(#logoBlueSoft)" opacity="0.22"/>
-              <path d="M78 142l28-30 24 22 24-28 24 36" fill="none" stroke="url(#logoBlue)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="98" cy="96" r="10" fill="url(#logoBlueSoft)"/>
-              <path d="M76 182h104" fill="none" stroke="url(#logoBlue)" stroke-width="10" stroke-linecap="round"/>
-              <path d="M76 202h74" fill="none" stroke="url(#logoBlue)" stroke-width="10" stroke-linecap="round" opacity="0.82"/>
-              <path d="M196 88v92" fill="none" stroke="url(#logoBlue)" stroke-width="10" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <span class="tool-mark-label">小红书微信截图分享海报</span>
-        </div>
-        <p class="eyebrow"># &gt; Tool Overview</p>
-        <p class="lead">
-          一个偏终端风格的轻量设计工具，用来把截图快速整理成更适合分享的方形宣传图。
-          你可以上传截图、修改标题文案、调整背景颜色，然后直接导出 PNG。
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-solid" href="./debuginn-wx-xhs-poster/index.html">$ open tool</a>
-        </div>
-      </article>
+      <div class="portal-grid">
+        <article class="portal-card">
+          <div class="card-bar" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <p class="card-path" data-i18n="cardPath">$ pwd: ~/tools/debuginn-wx-xhs-poster</p>
+          <div class="tool-mark" aria-hidden="true">
+            <span class="tool-mark-badge">
+              <svg class="tool-mark-logo" viewBox="0 0 256 256">
+                <rect x="36" y="44" width="184" height="168" rx="34" fill="none" stroke="url(#logoBlue)" stroke-width="12"/>
+                <rect x="60" y="68" width="136" height="92" rx="20" fill="url(#logoBlueSoft)" opacity="0.22"/>
+                <path d="M78 142l28-30 24 22 24-28 24 36" fill="none" stroke="url(#logoBlue)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="98" cy="96" r="10" fill="url(#logoBlueSoft)"/>
+                <path d="M76 182h104" fill="none" stroke="url(#logoBlue)" stroke-width="10" stroke-linecap="round"/>
+                <path d="M76 202h74" fill="none" stroke="url(#logoBlue)" stroke-width="10" stroke-linecap="round" opacity="0.82"/>
+                <path d="M196 88v92" fill="none" stroke="url(#logoBlue)" stroke-width="10" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="tool-mark-label" data-i18n="toolTitle">小红书微信截图分享海报</span>
+          </div>
+          <p class="eyebrow" data-i18n="eyebrow"># &gt; Tool Overview</p>
+          <p class="lead">
+            <span data-i18n="lead">一个偏终端风格的轻量设计工具，用来把截图快速整理成更适合分享的方形宣传图。你可以上传截图、修改标题文案、调整背景颜色，然后直接导出 PNG。</span>
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-solid" href="./debuginn-wx-xhs-poster/" data-i18n="openTool">$ open tool</a>
+          </div>
+        </article>
+
+        <article class="portal-card">
+          <div class="card-bar" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <p class="card-path" data-i18n="blogCardPath">$ pwd: ~/tools/debuginn-blog-cover</p>
+          <div class="tool-mark" aria-hidden="true">
+            <span class="tool-mark-badge">
+              <svg class="tool-mark-logo" viewBox="0 0 256 256">
+                <rect x="34" y="48" width="188" height="160" rx="36" fill="url(#logoBlueSoft)" opacity="0.2"/>
+                <circle cx="128" cy="126" r="54" fill="url(#logoBlueSoft)" opacity="0.32"/>
+                <rect x="94" y="66" width="68" height="68" rx="18" fill="none" stroke="url(#logoBlue)" stroke-width="10"/>
+                <path d="M74 168h108" fill="none" stroke="url(#logoBlue)" stroke-width="12" stroke-linecap="round"/>
+                <path d="M58 188h140" fill="none" stroke="url(#logoBlue)" stroke-width="10" stroke-linecap="round" opacity="0.82"/>
+              </svg>
+            </span>
+            <span class="tool-mark-label" data-i18n="blogToolTitle">Blog 主题图生成器</span>
+          </div>
+          <p class="eyebrow" data-i18n="blogEyebrow"># &gt; New Tool</p>
+          <p class="lead">
+            <span data-i18n="blogLead">用来快速生成 blog 文章封面图。支持上传 Logo、设置标题与副标题，自动生成中心图标加大字发光背景的横向主题图。</span>
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-solid" href="./debuginn-blog-cover/" data-i18n="openBlogTool">$ open tool</a>
+          </div>
+        </article>
+      </div>
     </section>
 
     <footer class="footer">
       <span>© 2026 Debuginn Tools</span>
-      <a href="#top">返回顶部</a>
+      <a href="#top" data-i18n="backTop">返回顶部</a>
     </footer>
   </main>
+  <script src="./portal.js"></script>
 </body>
 </html>

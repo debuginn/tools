@@ -13,12 +13,43 @@
 <body>
   <main class="shell">
     <header class="topbar">
-      <div class="top-pill">
-        <div class="brand-block">
-          <span class="terminal-prefix">ready ~/tools</span>
-          <span class="brand">debuginn-wx-xhs-poster</span>
-        </div>
-        <a class="home-link" href="../index.html">返回首页</a>
+      <div class="nav-shell">
+        <nav class="top-pill">
+          <div class="pill-left">
+            <a class="logo tool-title" href="./" aria-label="debuginn-wx-xhs-poster">
+              <img class="logo-mark" src="../favicon.svg" alt="Debuginn Tools" />
+              <span>debuginn-wx-xhs-poster</span>
+            </a>
+          </div>
+          <div class="pill-right">
+            <a class="home-link home-link-icon" href="../" aria-label="返回首页">
+              <span class="sf-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 18.5v-4.2c0-.9.7-1.6 1.6-1.6h2.8c.9 0 1.6.7 1.6 1.6v4.2"></path>
+                  <path d="M4.8 10.5L12 4.8l7.2 5.7"></path>
+                  <path d="M6.4 9.3v9.1c0 .9.7 1.6 1.6 1.6h8c.9 0 1.6-.7 1.6-1.6V9.3"></path>
+                </svg>
+              </span>
+            </a>
+            <button id="themeToggleBtn" class="mode-btn" type="button" aria-label="Switch theme">◐</button>
+            <div class="header-lang-dropdown">
+              <button id="langToggleBtn" class="header-lang-trigger" type="button" aria-label="Switch language" aria-haspopup="listbox" aria-expanded="false">
+                <span class="header-lang-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M3 12h18"></path>
+                    <path d="M12 3c2.6 2.4 4 5.6 4 9s-1.4 6.6-4 9c-2.6-2.4-4-5.6-4-9s1.4-6.6 4-9z"></path>
+                  </svg>
+                </span>
+                <span class="header-lang-current">中文</span>
+              </button>
+              <div class="header-lang-menu" role="listbox" aria-label="Language options">
+                <button type="button" data-lang-option="zh" class="active">中文</button>
+                <button type="button" data-lang-option="en">EN</button>
+              </div>
+            </div>
+          </div>
+        </nav>
       </div>
     </header>
 
@@ -29,24 +60,24 @@
           <span></span>
           <span></span>
         </div>
-        <p class="panel-path">$ config: /builder/share-poster</p>
-        <h1>小红书微信截图分享海报</h1>
-        <p class="panel-desc">上传截图、编辑文案、调整背景和标题配色，实时预览并导出方形分享图。</p>
+        <p class="panel-path" data-i18n="panelPath">$ config: /builder/debuginn-wx-xhs-poster</p>
+        <h1 data-i18n="panelTitle">小红书微信截图分享海报</h1>
+        <p class="panel-desc" data-i18n="panelDesc">上传截图、编辑文案、调整背景和标题配色，实时预览并导出方形分享图。</p>
 
         <div class="field">
-          <label for="sizeSelect">尺寸比例</label>
+          <label for="sizeSelect" data-i18n="sizeLabel">尺寸比例</label>
           <select id="sizeSelect" class="visually-hidden-select" aria-hidden="true" tabindex="-1">
             <option value="square" selected>1:1 微信</option>
             <option value="xhs">3:4 小红书</option>
           </select>
           <div class="scheme-grid" aria-label="尺寸比例">
-            <button class="scheme-btn size-btn is-active" type="button" data-size="square">1:1 微信</button>
-            <button class="scheme-btn size-btn" type="button" data-size="xhs">3:4 小红书</button>
+            <button class="scheme-btn size-btn is-active" type="button" data-size="square" data-i18n="sizeWechat">1:1 微信</button>
+            <button class="scheme-btn size-btn" type="button" data-size="xhs" data-i18n="sizeXhs">3:4 小红书</button>
           </div>
         </div>
 
         <div class="field">
-          <label>背景色</label>
+          <label data-i18n="bgLabel">背景色</label>
           <div class="visually-hidden-color-inputs" aria-hidden="true">
             <input id="bgInput" type="color" value="#ffffff" tabindex="-1" />
             <input id="bgHexInput" type="text" value="#ffffff" tabindex="-1" />
@@ -71,21 +102,21 @@
         </div>
 
         <div class="field">
-          <label for="imageInput">截图图片</label>
+          <label for="imageInput" data-i18n="imageLabel">截图图片</label>
           <div class="upload-control">
             <input id="imageInput" class="sr-only-input" type="file" accept="image/*" />
-            <label for="imageInput" class="upload-trigger">选择截图文件</label>
-            <span id="imageFileName" class="upload-file-name">未选择文件</span>
+            <label for="imageInput" class="upload-trigger" data-i18n="chooseFile">选择截图文件</label>
+            <span id="imageFileName" class="upload-file-name" data-empty-zh="未选择文件" data-empty-en="No file selected">未选择文件</span>
           </div>
         </div>
 
         <div class="field">
-          <label for="titleInput">主标题</label>
+          <label for="titleInput" data-i18n="titleLabel">主标题</label>
           <input id="titleInput" type="text" value="总览" />
         </div>
 
         <div class="field">
-          <label for="gradientSelect">标题配色方案</label>
+          <label for="gradientSelect" data-i18n="titleSchemeLabel">标题配色方案</label>
           <select id="gradientSelect" class="visually-hidden-select" aria-hidden="true" tabindex="-1">
             <option value="cool" selected>冷色炫彩</option>
             <option value="warm">暖色炫彩</option>
@@ -109,12 +140,12 @@
         </div>
 
         <div class="field">
-          <label for="subtitleInput">副标题</label>
+          <label for="subtitleInput" data-i18n="subtitleLabel">副标题</label>
           <input id="subtitleInput" type="text" value="清晰呈现你的资产全貌" />
         </div>
 
         <div class="btns">
-          <button id="downloadBtn" class="btn btn-primary" type="button">导出 PNG</button>
+          <button id="downloadBtn" class="btn btn-primary" type="button" data-i18n="downloadPng">导出 PNG</button>
         </div>
       </aside>
 
@@ -124,7 +155,7 @@
           <span></span>
           <span></span>
         </div>
-        <p class="preview-path">$ preview: live-canvas</p>
+        <p class="preview-path" data-i18n="previewPath">$ preview: live-canvas</p>
         <div class="canvas-shell">
           <canvas id="preview" width="1080" height="1080"></canvas>
         </div>
@@ -133,7 +164,7 @@
 
     <footer class="footer">
       <span>© 2026 Debuginn Tools</span>
-      <a href="../index.html">返回首页</a>
+      <a href="../" data-i18n="backHome">返回首页</a>
     </footer>
   </main>
 
@@ -145,7 +176,7 @@
         <span></span>
         <span></span>
       </div>
-      <p class="modal-path">$ background: custom-color</p>
+      <p class="modal-path">$ background: debuginn-wx-xhs-poster</p>
       <div class="modal-head">
         <h2 id="colorModalTitle">选择背景色</h2>
         <button id="closeColorModalBtn" class="modal-close" type="button" aria-label="关闭">关闭</button>
