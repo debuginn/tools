@@ -1,9 +1,8 @@
+(function () {
 const previewCanvas = document.getElementById("preview");
 const ctx = previewCanvas.getContext("2d");
 const EXPORT_SCALE = 2;
 const PREVIEW_MAX_SIDE = 720;
-const THEME_KEY = "debuginn_tools_theme";
-const LANG_KEY = "debuginn_tools_lang";
 const STATE_KEY = "debuginn_wx_xhs_poster_state";
 
 const imageInput = document.getElementById("imageInput");
@@ -28,52 +27,11 @@ const gradientSelect = document.getElementById("gradientSelect");
 const schemeButtons = document.querySelectorAll(".scheme-btn[data-scheme]");
 const pickColorBtn = document.getElementById("pickColorBtn");
 const downloadBtn = document.getElementById("downloadBtn");
-const themeToggleBtn = document.getElementById("themeToggleBtn");
-const langToggleBtn = document.getElementById("langToggleBtn");
-const langDropdown = document.querySelector(".header-lang-dropdown");
-
-const uiTranslations = {
-  zh: {
-    backHome: "返回首页",
-    panelPath: "$ config: /builder/debuginn-wx-xhs-poster",
-    panelTitle: "小红书微信截图分享海报",
-    panelDesc: "上传截图、编辑文案、调整背景和标题配色，实时预览并导出方形分享图。",
-    sizeLabel: "尺寸比例",
-    sizeWechat: "1:1 微信",
-    sizeXhs: "3:4 小红书",
-    bgLabel: "背景色",
-    imageLabel: "截图图片",
-    chooseFile: "选择截图文件",
-    titleLabel: "主标题",
-    titleSchemeLabel: "标题配色方案",
-    subtitleLabel: "副标题",
-    downloadPng: "导出 PNG",
-    previewPath: "$ preview: live-canvas",
-    noFile: "未选择文件"
-  },
-  en: {
-    backHome: "Back home",
-    panelPath: "$ config: /builder/debuginn-wx-xhs-poster",
-    panelTitle: "Xiaohongshu & WeChat Share Poster",
-    panelDesc: "Upload screenshots, edit copy, tune background and title colors, preview instantly, and export a square poster.",
-    sizeLabel: "Aspect ratio",
-    sizeWechat: "1:1 WeChat",
-    sizeXhs: "3:4 Xiaohongshu",
-    bgLabel: "Background",
-    imageLabel: "Screenshot",
-    chooseFile: "Choose screenshot",
-    titleLabel: "Title",
-    titleSchemeLabel: "Title palette",
-    subtitleLabel: "Subtitle",
-    downloadPng: "Export PNG",
-    previewPath: "$ preview: live-canvas",
-    noFile: "No file selected"
-  }
-};
 
 let screenshotImage = null;
 let modalBackgroundColor = "#ffffff";
 let persistedImageName = "";
+const emptyFileName = imageFileName ? imageFileName.textContent.trim() : "";
 
 const gradients = {
   cool: ["#4CC9F0", "#3A86FF", "#7B61FF", "#5EEAD4"],
@@ -121,44 +79,6 @@ function fitRect(srcW, srcH, dstX, dstY, dstW, dstH) {
   const x = dstX + (dstW - drawW) / 2;
   const y = dstY + (dstH - drawH) / 2;
   return { x, y, w: drawW, h: drawH };
-}
-
-function applyTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
-}
-
-function updateThemeButton(theme) {
-  if (!themeToggleBtn) return;
-  themeToggleBtn.setAttribute("aria-label", theme === "dark" ? "Switch to light theme" : "Switch to dark theme");
-}
-
-function setActiveLang(lang) {
-  const options = document.querySelectorAll("[data-lang-option]");
-  const current = document.querySelector(".header-lang-current");
-  let currentLabel = "中文";
-
-  options.forEach((option) => {
-    const isActive = option.getAttribute("data-lang-option") === lang;
-    option.classList.toggle("active", isActive);
-    if (isActive) currentLabel = option.textContent.trim();
-  });
-
-  if (current) current.textContent = currentLabel;
-}
-
-function applyLang(lang) {
-  const dict = uiTranslations[lang] || uiTranslations.zh;
-  document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
-  document.querySelectorAll("[data-i18n]").forEach((node) => {
-    const key = node.getAttribute("data-i18n");
-    if (dict[key]) node.textContent = dict[key];
-  });
-  if (persistedImageName) {
-    imageFileName.textContent = persistedImageName;
-  } else if (!imageInput.files?.length) {
-    imageFileName.textContent = dict.noFile;
-  }
-  setActiveLang(lang);
 }
 
 function loadPersistedState() {
@@ -245,9 +165,7 @@ function syncBackgroundButtons() {
   });
 
   if (customBgSwatch) {
-    customBgSwatch.style.background = matchedPreset
-      ? ""
-      : currentColor;
+    customBgSwatch.style.background = matchedPreset ? "" : currentColor;
     customBgSwatch.classList.toggle("is-custom-color", !matchedPreset);
   }
 }
@@ -273,12 +191,6 @@ function openColorModal() {
 
 function closeColorModal() {
   colorModal.hidden = true;
-}
-
-function closeLangMenu() {
-  if (!langDropdown || !langToggleBtn) return;
-  langDropdown.classList.remove("open");
-  langToggleBtn.setAttribute("aria-expanded", "false");
 }
 
 function getCurrentPreset() {
@@ -386,8 +298,7 @@ function setImageFileName(name) {
     imageFileName.textContent = persistedImageName;
     return;
   }
-  const currentLang = localStorage.getItem(LANG_KEY) || "zh";
-  imageFileName.textContent = (uiTranslations[currentLang] || uiTranslations.zh).noFile;
+  imageFileName.textContent = emptyFileName;
 }
 
 function setScreenshotImage(dataUrl, fileName = "") {
@@ -537,8 +448,6 @@ downloadBtn.addEventListener("click", () => {
   link.click();
 });
 
-const savedTheme = localStorage.getItem(THEME_KEY) || "dark";
-const savedLang = localStorage.getItem(LANG_KEY) || "zh";
 const savedState = loadPersistedState();
 
 if (savedState) {
@@ -551,46 +460,6 @@ if (savedState) {
   persistedImageName = savedState.imageName || "";
 }
 
-applyTheme(savedTheme);
-updateThemeButton(savedTheme);
-applyLang(savedLang);
-
-if (themeToggleBtn) {
-  themeToggleBtn.addEventListener("click", () => {
-    const nextTheme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
-    localStorage.setItem(THEME_KEY, nextTheme);
-    applyTheme(nextTheme);
-    updateThemeButton(nextTheme);
-  });
-}
-
-if (langToggleBtn && langDropdown) {
-  langToggleBtn.addEventListener("click", (event) => {
-    event.stopPropagation();
-    const nextOpen = !langDropdown.classList.contains("open");
-    langDropdown.classList.toggle("open", nextOpen);
-    langToggleBtn.setAttribute("aria-expanded", nextOpen ? "true" : "false");
-  });
-
-  document.querySelectorAll("[data-lang-option]").forEach((option) => {
-    option.addEventListener("click", () => {
-      const nextLang = option.getAttribute("data-lang-option") || "zh";
-      localStorage.setItem(LANG_KEY, nextLang);
-      applyLang(nextLang);
-      closeLangMenu();
-    });
-  });
-
-  document.addEventListener("click", (event) => {
-    if (event.target instanceof Element && event.target.closest(".header-lang-dropdown")) return;
-    closeLangMenu();
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeLangMenu();
-  });
-}
-
 syncSizeButtons();
 syncSchemeButtons();
 render();
@@ -598,3 +467,4 @@ render();
 if (savedState?.imageData) {
   setScreenshotImage(savedState.imageData, savedState.imageName || "");
 }
+})();

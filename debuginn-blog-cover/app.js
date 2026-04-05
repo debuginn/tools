@@ -1,7 +1,6 @@
+(function () {
 const previewCanvas = document.getElementById("preview");
 const ctx = previewCanvas.getContext("2d");
-const THEME_KEY = "debuginn_tools_theme";
-const LANG_KEY = "debuginn_tools_lang";
 const STATE_KEY = "debuginn_blog_cover_state";
 
 const imageInput = document.getElementById("imageInput");
@@ -14,47 +13,12 @@ const customAccentSwatch = document.getElementById("customAccentSwatch");
 const glowInput = document.getElementById("glowInput");
 const trackingInput = document.getElementById("trackingInput");
 const downloadBtn = document.getElementById("downloadBtn");
-const themeToggleBtn = document.getElementById("themeToggleBtn");
-const langToggleBtn = document.getElementById("langToggleBtn");
-const langDropdown = document.querySelector(".header-lang-dropdown");
-
-const uiTranslations = {
-  zh: {
-    backHome: "返回首页",
-    panelPath: "$ config: /builder/debuginn-blog-cover",
-    panelTitle: "Blog 主题图生成器",
-    panelDesc: "上传 Logo、输入标题，快速生成带有中心图标和发光背景的 blog 封面图。",
-    imageLabel: "中心图标",
-    chooseFile: "选择图标文件",
-    titleLabel: "主标题",
-    accentLabel: "主题色",
-    glowLabel: "发光强度",
-    trackingLabel: "主标题字间距",
-    downloadPng: "导出 PNG",
-    previewPath: "$ preview: blog-cover",
-    noFile: "未选择文件"
-  },
-  en: {
-    backHome: "Back home",
-    panelPath: "$ config: /builder/debuginn-blog-cover",
-    panelTitle: "Blog Cover Generator",
-    panelDesc: "Upload a logo, edit the title, then generate a glowing blog hero cover in seconds.",
-    imageLabel: "Center logo",
-    chooseFile: "Choose logo file",
-    titleLabel: "Title",
-    accentLabel: "Accent color",
-    glowLabel: "Glow intensity",
-    trackingLabel: "Title tracking",
-    downloadPng: "Export PNG",
-    previewPath: "$ preview: blog-cover",
-    noFile: "No file selected"
-  }
-};
 
 const COVER_SIZE = { width: 1600, height: 900 };
 
 let centerImage = null;
 let persistedImageName = "";
+const emptyFileName = imageFileName ? imageFileName.textContent.trim() : "";
 
 function syncAccentButtons() {
   const currentAccent = normalizeHex(accentInput.value);
@@ -70,41 +34,6 @@ function syncAccentButtons() {
   pickAccentBtn.classList.toggle("is-active", !matchedPreset);
   customAccentSwatch.style.background = matchedPreset ? "" : currentAccent;
   customAccentSwatch.classList.toggle("is-custom-color", !matchedPreset);
-}
-
-function applyTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
-}
-
-function updateThemeButton(theme) {
-  if (!themeToggleBtn) return;
-  themeToggleBtn.setAttribute("aria-label", theme === "dark" ? "Switch to light theme" : "Switch to dark theme");
-}
-
-function setActiveLang(lang) {
-  const options = document.querySelectorAll("[data-lang-option]");
-  const current = document.querySelector(".header-lang-current");
-  let currentLabel = "中文";
-
-  options.forEach((option) => {
-    const isActive = option.getAttribute("data-lang-option") === lang;
-    option.classList.toggle("active", isActive);
-    if (isActive) currentLabel = option.textContent.trim();
-  });
-
-  if (current) current.textContent = currentLabel;
-}
-
-function applyLang(lang) {
-  const dict = uiTranslations[lang] || uiTranslations.zh;
-  document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
-  document.querySelectorAll("[data-i18n]").forEach((node) => {
-    const key = node.getAttribute("data-i18n");
-    if (dict[key]) node.textContent = dict[key];
-  });
-  if (persistedImageName) imageFileName.textContent = persistedImageName;
-  else imageFileName.textContent = dict.noFile;
-  setActiveLang(lang);
 }
 
 function normalizeHex(value) {
@@ -265,9 +194,8 @@ function render() {
 
 function setImageFileName(name) {
   persistedImageName = name || "";
-  const currentLang = localStorage.getItem(LANG_KEY) || "zh";
   if (persistedImageName) imageFileName.textContent = persistedImageName;
-  else imageFileName.textContent = (uiTranslations[currentLang] || uiTranslations.zh).noFile;
+  else imageFileName.textContent = emptyFileName;
 }
 
 function setCenterImage(dataUrl, fileName = "") {
@@ -278,41 +206,6 @@ function setCenterImage(dataUrl, fileName = "") {
     render();
   };
   img.src = dataUrl;
-}
-
-function bindLangDropdown() {
-  if (!langDropdown || !langToggleBtn) return;
-  const options = document.querySelectorAll("[data-lang-option]");
-
-  const close = () => {
-    langDropdown.classList.remove("open");
-    langToggleBtn.setAttribute("aria-expanded", "false");
-  };
-
-  langToggleBtn.addEventListener("click", (event) => {
-    event.stopPropagation();
-    const nextOpen = !langDropdown.classList.contains("open");
-    langDropdown.classList.toggle("open", nextOpen);
-    langToggleBtn.setAttribute("aria-expanded", nextOpen ? "true" : "false");
-  });
-
-  options.forEach((option) => {
-    option.addEventListener("click", () => {
-      const nextLang = option.getAttribute("data-lang-option") || "zh";
-      localStorage.setItem(LANG_KEY, nextLang);
-      applyLang(nextLang);
-      close();
-    });
-  });
-
-  document.addEventListener("click", (event) => {
-    if (event.target instanceof Element && event.target.closest(".header-lang-dropdown")) return;
-    close();
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") close();
-  });
 }
 
 imageInput.addEventListener("change", (event) => {
@@ -356,8 +249,6 @@ downloadBtn.addEventListener("click", () => {
   link.click();
 });
 
-const savedTheme = localStorage.getItem(THEME_KEY) || "dark";
-const savedLang = localStorage.getItem(LANG_KEY) || "zh";
 const savedState = loadPersistedState();
 
 if (savedState) {
@@ -368,22 +259,9 @@ if (savedState) {
   persistedImageName = savedState.imageName || "";
 }
 
-applyTheme(savedTheme);
-updateThemeButton(savedTheme);
-applyLang(savedLang);
-bindLangDropdown();
-
-if (themeToggleBtn) {
-  themeToggleBtn.addEventListener("click", () => {
-    const nextTheme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
-    localStorage.setItem(THEME_KEY, nextTheme);
-    applyTheme(nextTheme);
-    updateThemeButton(nextTheme);
-  });
-}
-
 render();
 
 if (savedState?.imageData) {
   setCenterImage(savedState.imageData, savedState.imageName || "");
 }
+})();
