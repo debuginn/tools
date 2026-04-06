@@ -40,3 +40,4 @@ defaultContentLanguageInSubdir = false
   twitterURL = "https://x.com/idebuginn"
   telegramURL = "https://t.me/idebuginn"
   copyright = "Open source, freely shared."
+  installCmd = "/plugin marketplace add debuginn/skills"
