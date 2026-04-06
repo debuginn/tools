@@ -32,8 +32,8 @@ defaultContentLanguageInSubdir = false
 
 [params]
   brandName = "DebugInn"
-  logoImage = "/img/logo.jpg"
-  ogImage = "/img/logo.jpg"
+  logoImage = "/img/logo.png"
+  ogImage = "/img/logo.png"
   twitterHandle = "@debuginn"
   blogURL = "https://blog.debuginn.com/"
   githubURL = "https://github.com/debuginn"
