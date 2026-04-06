@@ -5,6 +5,7 @@ desc: "Upload a screenshot, edit the copy, adjust the background and title color
 toolType: "wx-xhs-poster"
 eyebrow: "# > Tool Overview"
 cardPath: "$ pwd: ~/tools/debuginn-wx-xhs-poster"
+installCode: "/plugin marketplace add debuginn/skills"
 toolCSS: "/css/wx-xhs-poster.css"
 toolJS: "/js/wx-xhs-poster.js"
 tags: ["Canvas API", "PNG Export", "XHS · WeChat"]

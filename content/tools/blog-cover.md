@@ -5,6 +5,7 @@ desc: "Upload a logo, edit the title, then generate a glowing blog hero cover in
 toolType: "blog-cover"
 eyebrow: "# > New Tool"
 cardPath: "$ pwd: ~/tools/debuginn-blog-cover"
+installCode: "/plugin marketplace add debuginn/skills"
 toolCSS: "/css/blog-cover.css"
 toolJS: "/js/blog-cover.js"
 tags: ["Canvas API", "PNG Export", "Blog Cover"]
