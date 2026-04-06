@@ -1,0 +1,3 @@
+[submodule "themes/hugo-theme-skills"]
+	path = themes/hugo-theme-skills
+	url = https://github.com/debuginn/hugo-theme-skills
