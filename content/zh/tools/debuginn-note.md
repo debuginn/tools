@@ -4,6 +4,7 @@ slug: "debuginn-note"
 desc: "将当前对话整理成结构化 Markdown 文档，在线预览确认后保存到指定目录，支持记忆保存路径与冲突处理。"
 cardPath: "$ pwd: ~/skills/debuginn-note"
 installCode: "/plugin marketplace add debuginn/skills"
+githubRepo: "https://github.com/debuginn/skills"
 buttons: ["install"]
 tags: ["Skill", "Markdown", "笔记导出"]
 weight: 3
