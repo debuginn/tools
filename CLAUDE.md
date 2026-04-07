@@ -30,11 +30,23 @@ git submodule update --init --recursive
 Each tool is a content Markdown file with frontmatter that drives how the theme renders it:
 
 ```toml
-toolType = "..."        # tool identifier
-toolCSS = "/css/..."    # loaded by theme for this tool
-toolJS  = "/js/..."     # loaded by theme for this tool
-installCode = "..."     # shown in install block on the page
+toolType = "..."        # tool identifier — selects controls partial + canvas
+toolCSS = "/css/..."    # per-tool stylesheet loaded by theme
+toolJS  = "/js/..."     # per-tool script loaded by theme
+installCode = "..."     # enables card flip; shows install command on back face
+buttons = ["open", "install"]  # which buttons to show on card front (see below)
+tags = ["...", "..."]  # tag chips on card
 ```
+
+**`buttons` array** controls the card front actions:
+
+| Value | Renders |
+|---|---|
+| `"open"` | Link button to the tool page (`$ OpenTool`) |
+| `"install"` | Flip button to show install command |
+
+- Default (no `buttons` set): shows `open`; also shows `install` when `installCode` is set
+- Skill-only card (no tool page): `buttons = ["install"]`
 
 The theme reads these params and injects the CSS/JS files. Tool logic is self-contained vanilla JS IIFEs in `static/js/`.
 
@@ -54,3 +66,7 @@ Both tools:
 1. Add `static/js/{tool}.js` and `static/css/{tool}.css`
 2. Create `content/tools/{tool}.md` and `content/zh/tools/{tool}.md` with matching frontmatter
 3. The theme handles rendering — no Hugo template changes needed
+
+### Adding a Skill-only Card (no tool page)
+1. Create `content/tools/{skill}.md` and `content/zh/tools/{skill}.md`
+2. Set `installCode` and `buttons = ["install"]` — omit `toolType`/`toolCSS`/`toolJS`
