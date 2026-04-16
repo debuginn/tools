@@ -13,7 +13,7 @@ var layoutPresets = {
     height: 1080,
     screenshotBox: { x: 86, y: 96, w: 458, h: 900, r: 54 },
     title: { x: 612, y: 438, fontSize: 110 },
-    subtitle: { x: 612, y: 560, maxWidth: 400, lineHeight: 34, fontSize: 24 },
+    subtitle: { x: 612, y: 578, maxWidth: 400, lineHeight: 34, fontSize: 24 },
     placeholder: { x: 238, y: 540 }
   },
   xhs: {
@@ -21,7 +21,7 @@ var layoutPresets = {
     height: 1440,
     screenshotBox: { x: 109, y: 185, w: 545, h: 1071, r: 59 },
     title: { x: 686, y: 619, fontSize: 101 },
-    subtitle: { x: 686, y: 731, maxWidth: 294, lineHeight: 31, fontSize: 22 },
+    subtitle: { x: 686, y: 750, maxWidth: 294, lineHeight: 31, fontSize: 22 },
     placeholder: { x: 292, y: 726 }
   }
 };
