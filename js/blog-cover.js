@@ -78,7 +78,7 @@ function render() {
 
   updateCanvasSize();
   syncAccentButtons();
-  core.drawCover(ctx, {
+  core.drawCover(ctx, 1, {
     title: title,
     accentColor: accentColor,
     glowStrength: glowStrength,
@@ -140,9 +140,37 @@ if (pickAccentBtn) {
 });
 
 downloadBtn.addEventListener("click", function () {
+  var EXPORT_SCALE = 2;
+  var exportCanvas = document.createElement("canvas");
+  exportCanvas.width = core.COVER_SIZE.width * EXPORT_SCALE;
+  exportCanvas.height = core.COVER_SIZE.height * EXPORT_SCALE;
+
+  var exportCtx = exportCanvas.getContext("2d");
+  exportCtx.imageSmoothingEnabled = true;
+  exportCtx.imageSmoothingQuality = "high";
+  core.drawCover(exportCtx, EXPORT_SCALE, {
+    title: (titleInput.value || "BLOG").trim(),
+    accentColor: core.normalizeHex(accentInput.value),
+    glowStrength: parseInt(glowInput.value, 10) || 68,
+    tracking: parseInt(trackingInput.value, 10) || 0,
+    centerImage: centerImage
+  });
+
   var link = document.createElement("a");
   link.download = "debuginn-blog-cover-" + Date.now() + ".png";
-  link.href = previewCanvas.toDataURL("image/png");
+
+  if (exportCanvas.toBlob) {
+    exportCanvas.toBlob(function (blob) {
+      if (!blob) return;
+      var url = URL.createObjectURL(blob);
+      link.href = url;
+      link.click();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+    }, "image/png");
+    return;
+  }
+
+  link.href = exportCanvas.toDataURL("image/png");
   link.click();
 });
 
