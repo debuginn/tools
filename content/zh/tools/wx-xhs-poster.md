@@ -6,7 +6,9 @@ toolType: "wx-xhs-poster"
 cardPath: "$ pwd: ~/tools/debuginn-wx-xhs-poster"
 installCode: "/plugin marketplace add debuginn/skills"
 toolCSS: "/css/wx-xhs-poster.css"
-toolJS: "/js/wx-xhs-poster.js"
+toolJS:
+  - "/js/wx-xhs-poster-core.js"
+  - "/js/wx-xhs-poster.js"
 tags: ["Canvas API", "PNG Export", "XHS · WeChat"]
 weight: 1
 ---
