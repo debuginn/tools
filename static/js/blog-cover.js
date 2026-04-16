@@ -1,31 +1,31 @@
 (function () {
-const previewCanvas = document.getElementById("preview");
-const ctx = previewCanvas.getContext("2d");
-const STATE_KEY = "debuginn_blog_cover_state";
+var core = window.BlogCoverCore;
 
-const imageInput = document.getElementById("imageInput");
-const imageFileName = document.getElementById("imageFileName");
-const titleInput = document.getElementById("titleInput");
-const accentInput = document.getElementById("accentInput");
-const accentButtons = document.querySelectorAll(".accent-btn[data-accent]");
-const pickAccentBtn = document.getElementById("pickAccentBtn");
-const customAccentSwatch = document.getElementById("customAccentSwatch");
-const glowInput = document.getElementById("glowInput");
-const trackingInput = document.getElementById("trackingInput");
-const downloadBtn = document.getElementById("downloadBtn");
+var previewCanvas = document.getElementById("preview");
+var ctx = previewCanvas.getContext("2d");
+var STATE_KEY = "debuginn_blog_cover_state";
 
-const COVER_SIZE = { width: 1600, height: 900 };
+var imageInput = document.getElementById("imageInput");
+var imageFileName = document.getElementById("imageFileName");
+var titleInput = document.getElementById("titleInput");
+var accentInput = document.getElementById("accentInput");
+var accentButtons = document.querySelectorAll(".accent-btn[data-accent]");
+var pickAccentBtn = document.getElementById("pickAccentBtn");
+var customAccentSwatch = document.getElementById("customAccentSwatch");
+var glowInput = document.getElementById("glowInput");
+var trackingInput = document.getElementById("trackingInput");
+var downloadBtn = document.getElementById("downloadBtn");
 
-let centerImage = null;
-let persistedImageName = "";
-const emptyFileName = imageFileName ? imageFileName.textContent.trim() : "";
+var centerImage = null;
+var persistedImageName = "";
+var emptyFileName = imageFileName ? imageFileName.textContent.trim() : "";
 
 function syncAccentButtons() {
-  const currentAccent = normalizeHex(accentInput.value);
-  let matchedPreset = false;
+  var currentAccent = core.normalizeHex(accentInput.value);
+  var matchedPreset = false;
 
-  accentButtons.forEach((button) => {
-    const isActive = button.dataset.accent === currentAccent;
+  accentButtons.forEach(function (button) {
+    var isActive = button.dataset.accent === currentAccent;
     button.classList.toggle("is-active", isActive);
     if (isActive) matchedPreset = true;
   });
@@ -36,15 +36,9 @@ function syncAccentButtons() {
   customAccentSwatch.classList.toggle("is-custom-color", !matchedPreset);
 }
 
-function normalizeHex(value) {
-  const v = value.trim();
-  if (/^#[0-9a-fA-F]{6}$/.test(v)) return v.toLowerCase();
-  return "#3a66ff";
-}
-
 function loadPersistedState() {
   try {
-    const raw = localStorage.getItem(STATE_KEY);
+    var raw = localStorage.getItem(STATE_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch (_) {
     return null;
@@ -58,7 +52,7 @@ function savePersistedState() {
       accent: accentInput.value,
       glow: glowInput.value,
       tracking: trackingInput.value,
-      imageData: centerImage?.src || "",
+      imageData: centerImage ? (centerImage.src || "") : "",
       imageName: persistedImageName || ""
     }));
   } catch (_) {
@@ -67,128 +61,30 @@ function savePersistedState() {
 }
 
 function updateCanvasSize() {
-  previewCanvas.width = COVER_SIZE.width;
-  previewCanvas.height = COVER_SIZE.height;
+  previewCanvas.width = core.COVER_SIZE.width;
+  previewCanvas.height = core.COVER_SIZE.height;
 
-  const maxWidth = 760;
-  const displayWidth = Math.min(maxWidth, COVER_SIZE.width);
-  previewCanvas.style.width = `${displayWidth}px`;
+  var maxWidth = 760;
+  var displayWidth = Math.min(maxWidth, core.COVER_SIZE.width);
+  previewCanvas.style.width = displayWidth + "px";
   previewCanvas.style.height = "auto";
 }
 
-function hexToRgba(hex, alpha) {
-  const clean = normalizeHex(hex).slice(1);
-  const num = Number.parseInt(clean, 16);
-  const r = (num >> 16) & 255;
-  const g = (num >> 8) & 255;
-  const b = num & 255;
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
-function roundedRect(context, x, y, w, h, r) {
-  context.beginPath();
-  context.moveTo(x + r, y);
-  context.arcTo(x + w, y, x + w, y + h, r);
-  context.arcTo(x + w, y + h, x, y + h, r);
-  context.arcTo(x, y + h, x, y, r);
-  context.arcTo(x, y, x + w, y, r);
-  context.closePath();
-}
-
-function fitContain(srcW, srcH, dstW, dstH) {
-  const ratio = Math.min(dstW / srcW, dstH / srcH);
-  return {
-    width: srcW * ratio,
-    height: srcH * ratio
-  };
-}
-
-function drawGlowBackground(width, height, accentColor, glowStrength) {
-  ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = accentColor;
-  ctx.fillRect(0, 0, width, height);
-
-  const glowRatio = Math.max(0.2, Math.min(1, glowStrength / 100));
-  const innerRadius = Math.max(40, width * (0.035 + glowRatio * 0.045));
-  const outerRadius = width * (0.22 + glowRatio * 0.34);
-  const midStop = 0.28 + glowRatio * 0.24;
-
-  const glow = ctx.createRadialGradient(
-    width / 2,
-    height / 2,
-    innerRadius,
-    width / 2,
-    height / 2,
-    outerRadius
-  );
-  glow.addColorStop(0, hexToRgba("#ffffff", 0.28 + glowRatio * 0.4));
-  glow.addColorStop(midStop, hexToRgba("#9dd0ff", 0.12 + glowRatio * 0.22));
-  glow.addColorStop(1, hexToRgba(accentColor, 0));
-  ctx.fillStyle = glow;
-  ctx.fillRect(0, 0, width, height);
-}
-
-function drawTrackingText(text, centerX, centerY, tracking) {
-  const chars = [...text];
-  const widths = chars.map((char) => ctx.measureText(char).width);
-  const totalWidth = widths.reduce((sum, value) => sum + value, 0) + Math.max(0, chars.length - 1) * tracking;
-  let cursorX = centerX - totalWidth / 2;
-  const metrics = ctx.measureText(text);
-  const ascent = metrics.actualBoundingBoxAscent || 0;
-  const descent = metrics.actualBoundingBoxDescent || 0;
-  const drawY = centerY + (ascent - descent) / 2;
-
-  chars.forEach((char, index) => {
-    ctx.fillText(char, cursorX, drawY);
-    cursorX += widths[index] + tracking;
-  });
-}
-
-function drawBackdropText(width, height, title, tracking) {
-  const fontSize = Math.round(width * 0.12);
-  ctx.save();
-  ctx.textAlign = "left";
-  ctx.textBaseline = "alphabetic";
-  ctx.fillStyle = "rgba(255,255,255,0.9)";
-  ctx.font = `800 ${fontSize}px "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif`;
-  drawTrackingText(title || "BLOG", width / 2, height / 2, tracking);
-  ctx.restore();
-}
-
-function drawCenterImage(width, height, accentColor) {
-  const cardSize = Math.round(Math.min(width, height) * 0.36);
-  const cardX = Math.round((width - cardSize) / 2);
-  const cardY = Math.round((height - cardSize) / 2);
-
-  if (centerImage) {
-    const fit = fitContain(centerImage.width, centerImage.height, cardSize, cardSize);
-    const drawX = cardX + (cardSize - fit.width) / 2;
-    const drawY = cardY + (cardSize - fit.height) / 2;
-    ctx.save();
-    ctx.shadowColor = hexToRgba("#0b1020", 0.22);
-    ctx.shadowBlur = 30;
-    ctx.shadowOffsetY = 18;
-    ctx.drawImage(centerImage, drawX, drawY, fit.width, fit.height);
-    ctx.restore();
-  }
-
-  ctx.strokeStyle = hexToRgba(accentColor, 0.16);
-  ctx.lineWidth = Math.max(2, width * 0.003);
-  ctx.strokeRect(0, 0, width, height);
-}
-
 function render() {
-  const { width, height } = COVER_SIZE;
-  const accentColor = normalizeHex(accentInput.value);
-  const glowStrength = Number.parseInt(glowInput.value, 10) || 68;
-  const tracking = Number.parseInt(trackingInput.value, 10) || 0;
-  const title = (titleInput.value || "BLOG").trim();
+  var accentColor = core.normalizeHex(accentInput.value);
+  var glowStrength = parseInt(glowInput.value, 10) || 68;
+  var tracking = parseInt(trackingInput.value, 10) || 0;
+  var title = (titleInput.value || "BLOG").trim();
 
   updateCanvasSize();
   syncAccentButtons();
-  drawGlowBackground(width, height, accentColor, glowStrength);
-  drawBackdropText(width, height, title, tracking);
-  drawCenterImage(width, height, accentColor);
+  core.drawCover(ctx, {
+    title: title,
+    accentColor: accentColor,
+    glowStrength: glowStrength,
+    tracking: tracking,
+    centerImage: centerImage
+  });
   savePersistedState();
 }
 
@@ -198,18 +94,18 @@ function setImageFileName(name) {
   else imageFileName.textContent = emptyFileName;
 }
 
-function setCenterImage(dataUrl, fileName = "") {
-  const img = new Image();
-  img.onload = () => {
+function setCenterImage(dataUrl, fileName) {
+  var img = new Image();
+  img.onload = function () {
     centerImage = img;
-    setImageFileName(fileName);
+    setImageFileName(fileName || "");
     render();
   };
   img.src = dataUrl;
 }
 
-imageInput.addEventListener("change", (event) => {
-  const [file] = event.target.files || [];
+imageInput.addEventListener("change", function (event) {
+  var file = (event.target.files || [])[0];
   if (!file) {
     centerImage = null;
     setImageFileName("");
@@ -217,43 +113,44 @@ imageInput.addEventListener("change", (event) => {
     return;
   }
 
-  const reader = new FileReader();
-  reader.onload = () => setCenterImage(reader.result, file.name);
+  var reader = new FileReader();
+  reader.onload = function () {
+    setCenterImage(reader.result, file.name);
+  };
   reader.readAsDataURL(file);
 });
 
-[...accentButtons].forEach((button) => {
-  button.addEventListener("click", () => {
+[].forEach.call(accentButtons, function (button) {
+  button.addEventListener("click", function () {
     accentInput.value = button.dataset.accent;
     render();
   });
 });
 
 if (pickAccentBtn) {
-  pickAccentBtn.addEventListener("click", () => {
+  pickAccentBtn.addEventListener("click", function () {
     if (typeof accentInput.showPicker === "function") accentInput.showPicker();
     else accentInput.click();
   });
 }
 
-[titleInput, accentInput, glowInput, trackingInput].forEach((element) => {
-  element.addEventListener("input", render);
-  element.addEventListener("change", render);
+[titleInput, accentInput, glowInput, trackingInput].forEach(function (el) {
+  el.addEventListener("input", render);
+  el.addEventListener("change", render);
 });
 
-downloadBtn.addEventListener("click", () => {
-  const link = document.createElement("a");
-  const { width, height } = COVER_SIZE;
-  link.download = `debuginn-blog-cover-${width}x${height}.png`;
+downloadBtn.addEventListener("click", function () {
+  var link = document.createElement("a");
+  link.download = "debuginn-blog-cover-" + Date.now() + ".png";
   link.href = previewCanvas.toDataURL("image/png");
   link.click();
 });
 
-const savedState = loadPersistedState();
+var savedState = loadPersistedState();
 
 if (savedState) {
   titleInput.value = savedState.title || titleInput.value;
-  accentInput.value = normalizeHex(savedState.accent || accentInput.value);
+  accentInput.value = core.normalizeHex(savedState.accent || accentInput.value);
   glowInput.value = savedState.glow || glowInput.value;
   trackingInput.value = savedState.tracking || trackingInput.value;
   persistedImageName = savedState.imageName || "";
@@ -261,7 +158,7 @@ if (savedState) {
 
 render();
 
-if (savedState?.imageData) {
+if (savedState && savedState.imageData) {
   setCenterImage(savedState.imageData, savedState.imageName || "");
 }
 })();
