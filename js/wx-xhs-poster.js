@@ -1,89 +1,43 @@
 (function () {
-const previewCanvas = document.getElementById("preview");
-const ctx = previewCanvas.getContext("2d");
-const EXPORT_SCALE = 2;
-const PREVIEW_MAX_SIDE = 720;
-const STATE_KEY = "debuginn_wx_xhs_poster_state";
+var core = window.WxXhsPoster;
 
-const imageInput = document.getElementById("imageInput");
-const imageFileName = document.getElementById("imageFileName");
-const sizeSelect = document.getElementById("sizeSelect");
-const sizeButtons = document.querySelectorAll(".size-btn[data-size]");
-const titleInput = document.getElementById("titleInput");
-const subtitleInput = document.getElementById("subtitleInput");
-const bgInput = document.getElementById("bgInput");
-const bgHexInput = document.getElementById("bgHexInput");
-const colorModal = document.getElementById("colorModal");
-const modalHexInput = document.getElementById("modalHexInput");
-const modalColorPreview = document.getElementById("modalColorPreview");
-const modalColorValue = document.getElementById("modalColorValue");
-const modalBgButtons = document.querySelectorAll(".modal-bg-btn");
-const closeColorModalBtn = document.getElementById("closeColorModalBtn");
-const modalEyedropperBtn = document.getElementById("modalEyedropperBtn");
-const applyColorBtn = document.getElementById("applyColorBtn");
-const customBgSwatch = document.getElementById("customBgSwatch");
-const backgroundButtons = document.querySelectorAll(".bg-btn");
-const gradientSelect = document.getElementById("gradientSelect");
-const schemeButtons = document.querySelectorAll(".scheme-btn[data-scheme]");
-const pickColorBtn = document.getElementById("pickColorBtn");
-const downloadBtn = document.getElementById("downloadBtn");
+var previewCanvas = document.getElementById("preview");
+var ctx = previewCanvas.getContext("2d");
+var EXPORT_SCALE = 2;
+var PREVIEW_MAX_SIDE = 720;
+var STATE_KEY = "debuginn_wx_xhs_poster_state";
 
-let screenshotImage = null;
-let modalBackgroundColor = "#ffffff";
-let persistedImageName = "";
-const emptyFileName = imageFileName ? imageFileName.textContent.trim() : "";
+var imageInput = document.getElementById("imageInput");
+var imageFileName = document.getElementById("imageFileName");
+var sizeSelect = document.getElementById("sizeSelect");
+var sizeButtons = document.querySelectorAll(".size-btn[data-size]");
+var titleInput = document.getElementById("titleInput");
+var subtitleInput = document.getElementById("subtitleInput");
+var bgInput = document.getElementById("bgInput");
+var bgHexInput = document.getElementById("bgHexInput");
+var colorModal = document.getElementById("colorModal");
+var modalHexInput = document.getElementById("modalHexInput");
+var modalColorPreview = document.getElementById("modalColorPreview");
+var modalColorValue = document.getElementById("modalColorValue");
+var modalBgButtons = document.querySelectorAll(".modal-bg-btn");
+var closeColorModalBtn = document.getElementById("closeColorModalBtn");
+var modalEyedropperBtn = document.getElementById("modalEyedropperBtn");
+var applyColorBtn = document.getElementById("applyColorBtn");
+var customBgSwatch = document.getElementById("customBgSwatch");
+var backgroundButtons = document.querySelectorAll(".bg-btn");
+var gradientSelect = document.getElementById("gradientSelect");
+var schemeButtons = document.querySelectorAll(".scheme-btn[data-scheme]");
+var pickColorBtn = document.getElementById("pickColorBtn");
+var downloadBtn = document.getElementById("downloadBtn");
 
-const gradients = {
-  cool: ["#4CC9F0", "#3A86FF", "#7B61FF", "#5EEAD4"],
-  warm: ["#FFB86B", "#FF8A65", "#FF5E7A", "#FF7CE5"],
-  ocean: ["#38BDF8", "#0EA5E9", "#2563EB", "#22D3EE"],
-  mono: ["#111827", "#1F2937", "#374151", "#111827"]
-};
-
-const layoutPresets = {
-  square: {
-    width: 1080,
-    height: 1080,
-    screenshotBox: { x: 86, y: 96, w: 458, h: 900, r: 54 },
-    title: { x: 612, y: 438, fontSize: 110 },
-    subtitle: { x: 612, y: 560, maxWidth: 400, lineHeight: 34, fontSize: 24 },
-    placeholder: { x: 238, y: 540 }
-  },
-  xhs: {
-    width: 1080,
-    height: 1440,
-    screenshotBox: { x: 109, y: 185, w: 545, h: 1071, r: 59 },
-    title: { x: 686, y: 619, fontSize: 101 },
-    subtitle: { x: 686, y: 731, maxWidth: 294, lineHeight: 31, fontSize: 22 },
-    placeholder: { x: 292, y: 726 }
-  }
-};
-
-function applyDrawingQuality(context) {
-  context.imageSmoothingEnabled = true;
-  context.imageSmoothingQuality = "high";
-}
-
-function fitRect(srcW, srcH, dstX, dstY, dstW, dstH) {
-  const srcRatio = srcW / srcH;
-  const dstRatio = dstW / dstH;
-  let drawW = dstW;
-  let drawH = dstH;
-  if (srcRatio > dstRatio) {
-    drawW = dstW;
-    drawH = dstW / srcRatio;
-  } else {
-    drawH = dstH;
-    drawW = dstH * srcRatio;
-  }
-  const x = dstX + (dstW - drawW) / 2;
-  const y = dstY + (dstH - drawH) / 2;
-  return { x, y, w: drawW, h: drawH };
-}
+var screenshotImage = null;
+var modalBackgroundColor = "#ffffff";
+var persistedImageName = "";
+var emptyFileName = imageFileName ? imageFileName.textContent.trim() : "";
 
 function loadPersistedState() {
   try {
-    const raw = localStorage.getItem(STATE_KEY);
+    var raw = localStorage.getItem(STATE_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch (error) {
     return null;
@@ -92,13 +46,13 @@ function loadPersistedState() {
 
 function savePersistedState() {
   try {
-    const state = {
+    var state = {
       title: titleInput.value,
       subtitle: subtitleInput.value,
       gradient: gradientSelect.value,
       size: sizeSelect.value,
       background: bgHexInput.value,
-      imageData: screenshotImage?.src || "",
+      imageData: screenshotImage ? (screenshotImage.src || "") : "",
       imageName: persistedImageName || ""
     };
     localStorage.setItem(STATE_KEY, JSON.stringify(state));
@@ -107,59 +61,25 @@ function savePersistedState() {
   }
 }
 
-function normalizeHex(value) {
-  const v = value.trim();
-  if (/^#[0-9a-fA-F]{6}$/.test(v)) return v.toLowerCase();
-  return null;
-}
-
-function drawRoundedClip(context, x, y, w, h, r) {
-  context.beginPath();
-  context.moveTo(x + r, y);
-  context.arcTo(x + w, y, x + w, y + h, r);
-  context.arcTo(x + w, y + h, x, y + h, r);
-  context.arcTo(x, y + h, x, y, r);
-  context.arcTo(x, y, x + w, y, r);
-  context.closePath();
-}
-
-function wrapText(context, text, x, y, maxWidth, lineHeight) {
-  if (!text) return;
-  const chars = [...text];
-  let line = "";
-  let drawY = y;
-  for (const ch of chars) {
-    const next = line + ch;
-    if (context.measureText(next).width > maxWidth && line) {
-      context.fillText(line, x, drawY);
-      line = ch;
-      drawY += lineHeight;
-    } else {
-      line = next;
-    }
-  }
-  if (line) context.fillText(line, x, drawY);
-}
-
 function syncSchemeButtons() {
-  schemeButtons.forEach((button) => {
+  schemeButtons.forEach(function (button) {
     button.classList.toggle("is-active", button.dataset.scheme === gradientSelect.value);
   });
 }
 
 function syncSizeButtons() {
-  sizeButtons.forEach((button) => {
+  sizeButtons.forEach(function (button) {
     button.classList.toggle("is-active", button.dataset.size === sizeSelect.value);
   });
 }
 
 function syncBackgroundButtons() {
-  const currentColor = normalizeHex(bgHexInput.value) || "#ffffff";
-  let matchedPreset = false;
+  var currentColor = core.normalizeHex(bgHexInput.value) || "#ffffff";
+  var matchedPreset = false;
 
-  backgroundButtons.forEach((button) => {
-    const preset = button.dataset.bg;
-    const isMatch = preset === currentColor;
+  backgroundButtons.forEach(function (button) {
+    var preset = button.dataset.bg;
+    var isMatch = preset === currentColor;
     button.classList.toggle("is-active", isMatch);
     if (isMatch) matchedPreset = true;
   });
@@ -171,13 +91,13 @@ function syncBackgroundButtons() {
 }
 
 function syncModalButtons() {
-  modalBgButtons.forEach((button) => {
+  modalBgButtons.forEach(function (button) {
     button.classList.toggle("is-active", button.dataset.modalBg === modalBackgroundColor);
   });
 }
 
 function updateModalPreview(color) {
-  modalBackgroundColor = normalizeHex(color) || "#ffffff";
+  modalBackgroundColor = core.normalizeHex(color) || "#ffffff";
   if (modalHexInput) modalHexInput.value = modalBackgroundColor;
   modalColorPreview.style.background = modalBackgroundColor;
   modalColorValue.textContent = modalBackgroundColor;
@@ -185,7 +105,7 @@ function updateModalPreview(color) {
 }
 
 function openColorModal() {
-  updateModalPreview(normalizeHex(bgHexInput.value) || "#ffffff");
+  updateModalPreview(core.normalizeHex(bgHexInput.value) || "#ffffff");
   colorModal.hidden = false;
 }
 
@@ -194,101 +114,39 @@ function closeColorModal() {
 }
 
 function getCurrentPreset() {
-  return layoutPresets[sizeSelect.value] || layoutPresets.square;
+  return core.layoutPresets[sizeSelect.value] || core.layoutPresets.square;
 }
 
 function updatePreviewCanvasSize(preset) {
   previewCanvas.width = preset.width;
   previewCanvas.height = preset.height;
 
-  const widthRatio = preset.width / preset.height;
-  const heightRatio = preset.height / preset.width;
-  const displayWidth = preset.width >= preset.height
+  var widthRatio = preset.width / preset.height;
+  var heightRatio = preset.height / preset.width;
+  var displayWidth = preset.width >= preset.height
     ? PREVIEW_MAX_SIDE
     : Math.round(PREVIEW_MAX_SIDE * widthRatio);
-  const displayHeight = preset.height >= preset.width
+  var displayHeight = preset.height >= preset.width
     ? PREVIEW_MAX_SIDE
     : Math.round(PREVIEW_MAX_SIDE * heightRatio);
 
-  previewCanvas.style.width = `${displayWidth}px`;
+  previewCanvas.style.width = displayWidth + "px";
   previewCanvas.style.height = "auto";
-  previewCanvas.style.maxHeight = `${displayHeight}px`;
-}
-
-function drawPoster(context, preset, scale = 1) {
-  const bgColor = normalizeHex(bgHexInput.value) || "#ffffff";
-  bgInput.value = bgColor;
-  syncBackgroundButtons();
-
-  context.save();
-  context.setTransform(scale, 0, 0, scale, 0, 0);
-  context.clearRect(0, 0, preset.width, preset.height);
-  context.fillStyle = bgColor;
-  context.fillRect(0, 0, preset.width, preset.height);
-
-  if (screenshotImage) {
-    const screenshotBox = preset.screenshotBox;
-    const target = fitRect(
-      screenshotImage.width,
-      screenshotImage.height,
-      screenshotBox.x, screenshotBox.y, screenshotBox.w, screenshotBox.h
-    );
-    context.save();
-    drawRoundedClip(context, screenshotBox.x, screenshotBox.y, screenshotBox.w, screenshotBox.h, screenshotBox.r);
-    context.clip();
-    context.drawImage(screenshotImage, target.x, target.y, target.w, target.h);
-    context.restore();
-  } else {
-    const screenshotBox = preset.screenshotBox;
-    context.save();
-    context.fillStyle = "#eef2f7";
-    drawRoundedClip(context, screenshotBox.x, screenshotBox.y, screenshotBox.w, screenshotBox.h, screenshotBox.r);
-    context.fill();
-    context.fillStyle = "#9aa3af";
-    context.font = "600 28px SF Pro Display, PingFang SC, sans-serif";
-    context.fillText("上传截图", preset.placeholder.x, preset.placeholder.y);
-    context.restore();
-  }
-
-  const scheme = gradients[gradientSelect.value] || gradients.cool;
-  const titleGradient = context.createLinearGradient(
-    preset.title.x,
-    preset.title.y,
-    preset.title.x + 238,
-    preset.title.y + 122
-  );
-  titleGradient.addColorStop(0, scheme[0]);
-  titleGradient.addColorStop(0.34, scheme[1]);
-  titleGradient.addColorStop(0.68, scheme[2]);
-  titleGradient.addColorStop(1, scheme[3]);
-
-  const title = (titleInput.value || "总览").trim();
-  const subtitle = (subtitleInput.value || "").trim();
-
-  context.textAlign = "left";
-  context.textBaseline = "top";
-  context.fillStyle = titleGradient;
-  context.font = `700 ${preset.title.fontSize}px SF Pro Display, PingFang SC, sans-serif`;
-  context.fillText(title, preset.title.x, preset.title.y);
-
-  context.fillStyle = "#6e6e73";
-  context.font = `400 ${preset.subtitle.fontSize}px SF Pro Display, PingFang SC, sans-serif`;
-  wrapText(
-    context,
-    subtitle,
-    preset.subtitle.x,
-    preset.subtitle.y,
-    preset.subtitle.maxWidth,
-    preset.subtitle.lineHeight
-  );
-  context.restore();
+  previewCanvas.style.maxHeight = displayHeight + "px";
 }
 
 function render() {
-  const preset = getCurrentPreset();
+  var preset = getCurrentPreset();
   updatePreviewCanvasSize(preset);
-  applyDrawingQuality(ctx);
-  drawPoster(ctx, preset, 1);
+  core.applyDrawingQuality(ctx);
+  core.drawPoster(ctx, preset, 1, {
+    bgColor: bgHexInput.value,
+    screenshotImage: screenshotImage,
+    gradientKey: gradientSelect.value,
+    title: titleInput.value,
+    subtitle: subtitleInput.value
+  });
+  syncBackgroundButtons();
   savePersistedState();
 }
 
@@ -301,26 +159,26 @@ function setImageFileName(name) {
   imageFileName.textContent = emptyFileName;
 }
 
-function setScreenshotImage(dataUrl, fileName = "") {
-  const img = new Image();
-  img.onload = () => {
+function setScreenshotImage(dataUrl, fileName) {
+  var img = new Image();
+  img.onload = function () {
     screenshotImage = img;
-    setImageFileName(fileName);
+    setImageFileName(fileName || "");
     render();
   };
   img.src = dataUrl;
 }
 
 function readImage(file) {
-  const reader = new FileReader();
-  reader.onload = () => {
+  var reader = new FileReader();
+  reader.onload = function () {
     setScreenshotImage(reader.result, file.name);
   };
   reader.readAsDataURL(file);
 }
 
-imageInput.addEventListener("change", (event) => {
-  const [file] = event.target.files || [];
+imageInput.addEventListener("change", function (event) {
+  var file = (event.target.files || [])[0];
   if (file) {
     readImage(file);
   } else {
@@ -330,68 +188,68 @@ imageInput.addEventListener("change", (event) => {
   }
 });
 
-[titleInput, subtitleInput, gradientSelect, sizeSelect].forEach((el) => {
+[titleInput, subtitleInput, gradientSelect, sizeSelect].forEach(function (el) {
   el.addEventListener("input", render);
   el.addEventListener("change", render);
 });
 
-sizeButtons.forEach((button) => {
-  button.addEventListener("click", () => {
+sizeButtons.forEach(function (button) {
+  button.addEventListener("click", function () {
     sizeSelect.value = button.dataset.size;
     syncSizeButtons();
     render();
   });
 });
 
-schemeButtons.forEach((button) => {
-  button.addEventListener("click", () => {
+schemeButtons.forEach(function (button) {
+  button.addEventListener("click", function () {
     gradientSelect.value = button.dataset.scheme;
     syncSchemeButtons();
     render();
   });
 });
 
-bgInput.addEventListener("input", () => {
+bgInput.addEventListener("input", function () {
   bgHexInput.value = bgInput.value;
   render();
 });
 
 bgHexInput.addEventListener("input", render);
 
-backgroundButtons.forEach((button) => {
+backgroundButtons.forEach(function (button) {
   if (button === pickColorBtn) return;
-  button.addEventListener("click", () => {
+  button.addEventListener("click", function () {
     bgHexInput.value = button.dataset.bg;
     render();
   });
 });
 
-pickColorBtn.addEventListener("click", () => {
+pickColorBtn.addEventListener("click", function () {
   openColorModal();
 });
 
-modalBgButtons.forEach((button) => {
-  button.addEventListener("click", () => {
+modalBgButtons.forEach(function (button) {
+  button.addEventListener("click", function () {
     updateModalPreview(button.dataset.modalBg);
   });
 });
 
 if (modalHexInput) {
-  modalHexInput.addEventListener("input", () => {
-    const color = normalizeHex(modalHexInput.value);
+  modalHexInput.addEventListener("input", function () {
+    var color = core.normalizeHex(modalHexInput.value);
     if (color) updateModalPreview(color);
   });
 }
 
 closeColorModalBtn.addEventListener("click", closeColorModal);
 
-colorModal.addEventListener("click", (event) => {
+colorModal.addEventListener("click", function (event) {
   if (event.target.dataset.closeModal === "true") {
     closeColorModal();
   }
 });
 
-modalEyedropperBtn.addEventListener("click", async () => {
+modalEyedropperBtn.addEventListener("click", function () {
   if (!("EyeDropper" in window)) {
     if (typeof bgInput.showPicker === "function") {
       bgInput.showPicker();
@@ -401,47 +259,52 @@ modalEyedropperBtn.addEventListener("click", async () => {
     return;
   }
 
-  try {
-    const eyeDropper = new EyeDropper();
-    const result = await eyeDropper.open();
+  var eyeDropper = new EyeDropper();
+  eyeDropper.open().then(function (result) {
     if (result && result.sRGBHex) {
       updateModalPreview(result.sRGBHex.toLowerCase());
     }
-  } catch (error) {
+  }).catch(function () {
     // User cancel is expected.
-  }
+  });
 });
 
-applyColorBtn.addEventListener("click", () => {
+applyColorBtn.addEventListener("click", function () {
   bgHexInput.value = modalBackgroundColor;
   bgInput.value = modalBackgroundColor;
   closeColorModal();
   render();
 });
 
-downloadBtn.addEventListener("click", () => {
-  const preset = getCurrentPreset();
-  const exportCanvas = document.createElement("canvas");
-  const exportWidth = preset.width * EXPORT_SCALE;
-  const exportHeight = preset.height * EXPORT_SCALE;
+downloadBtn.addEventListener("click", function () {
+  var preset = getCurrentPreset();
+  var exportCanvas = document.createElement("canvas");
+  var exportWidth = preset.width * EXPORT_SCALE;
+  var exportHeight = preset.height * EXPORT_SCALE;
   exportCanvas.width = exportWidth;
   exportCanvas.height = exportHeight;
 
-  const exportCtx = exportCanvas.getContext("2d");
+  var exportCtx = exportCanvas.getContext("2d");
   if (!exportCtx) return;
-  applyDrawingQuality(exportCtx);
-  drawPoster(exportCtx, preset, EXPORT_SCALE);
+  core.applyDrawingQuality(exportCtx);
+  core.drawPoster(exportCtx, preset, EXPORT_SCALE, {
+    bgColor: bgHexInput.value,
+    screenshotImage: screenshotImage,
+    gradientKey: gradientSelect.value,
+    title: titleInput.value,
+    subtitle: subtitleInput.value
+  });
 
-  const link = document.createElement("a");
-  link.download = `debuginn-wx-xhs-poster-${exportWidth}x${exportHeight}.png`;
+  var link = document.createElement("a");
+  link.download = "debuginn-wx-xhs-poster-" + exportWidth + "x" + exportHeight + ".png";
 
   if (exportCanvas.toBlob) {
-    exportCanvas.toBlob((blob) => {
+    exportCanvas.toBlob(function (blob) {
       if (!blob) return;
-      const url = URL.createObjectURL(blob);
+      var url = URL.createObjectURL(blob);
       link.href = url;
       link.click();
-      setTimeout(() => URL.revokeObjectURL(url), 3000);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
     }, "image/png");
     return;
   }
@@ -450,14 +313,14 @@ downloadBtn.addEventListener("click", () => {
   link.click();
 });
 
-const savedState = loadPersistedState();
+var savedState = loadPersistedState();
 
 if (savedState) {
   titleInput.value = savedState.title || titleInput.value;
   subtitleInput.value = savedState.subtitle || subtitleInput.value;
   gradientSelect.value = savedState.gradient || gradientSelect.value;
   sizeSelect.value = savedState.size || sizeSelect.value;
-  bgHexInput.value = normalizeHex(savedState.background || "") || bgHexInput.value;
+  bgHexInput.value = core.normalizeHex(savedState.background || "") || bgHexInput.value;
   bgInput.value = bgHexInput.value;
   persistedImageName = savedState.imageName || "";
 }
@@ -466,7 +329,7 @@ syncSizeButtons();
 syncSchemeButtons();
 render();
 
-if (savedState?.imageData) {
+if (savedState && savedState.imageData) {
   setScreenshotImage(savedState.imageData, savedState.imageName || "");
 }
 })();
