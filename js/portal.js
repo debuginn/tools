@@ -1,5 +1,15 @@
 const THEME_KEY = "debuginn_tools_theme";
 const THEME_PREFS = ["auto", "dark", "light"];
+const LANG_KEY = "debuginn_tools_lang";
+
+function autoDetectLang() {
+  try { if (localStorage.getItem(LANG_KEY)) return; } catch (_) {}
+  const lang = (navigator.language || "").toLowerCase();
+  if (!lang.startsWith("zh")) return;
+  const path = location.pathname;
+  if (path.startsWith("/zh")) return;
+  location.replace("/zh" + (path === "/" ? "/" : path) + location.search + location.hash);
+}
 
 function detectTheme() {
   return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -65,7 +75,10 @@ function bindLangDropdown(dropdownSel, triggerSel, optionAttr) {
     options.forEach((option) => {
       option.addEventListener("click", () => {
         const href = option.getAttribute(optionAttr);
-        if (href) window.location.href = href;
+        if (href) {
+          try { localStorage.setItem(LANG_KEY, "manual"); } catch (_) {}
+          window.location.href = href;
+        }
       });
     });
   });
@@ -113,12 +126,41 @@ function bindMobileMenu() {
   });
 }
 
+function initBounceTitle() {
+  const el = document.querySelector(".hero-title-accent");
+  if (!el) return;
+  const text = el.textContent;
+  const totalW = el.getBoundingClientRect().width || 200;
+  el.style.background = "none";
+  el.style.webkitTextFillColor = "";
+  el.innerHTML = "";
+  let offsetX = 0;
+  [...text].forEach((c, i) => {
+    const span = document.createElement("span");
+    if (c === " ") {
+      span.innerHTML = "&nbsp;";
+      span.style.display = "inline-block";
+      el.appendChild(span);
+      offsetX += totalW * 0.06;
+      return;
+    }
+    span.className = "bounce-char";
+    span.textContent = c;
+    span.style.animationDelay = `${i * 60}ms`;
+    span.style.backgroundSize = `${totalW}px 100%`;
+    span.style.backgroundPosition = `-${offsetX}px 0`;
+    el.appendChild(span);
+    offsetX += span.getBoundingClientRect().width || totalW / text.length;
+  });
+}
+
 function init() {
   let themePref = readThemePref();
   const themeBtn = document.querySelector(".mode-btn");
 
   applyThemePref(themePref);
   updateThemeButton(themePref, themeBtn);
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(initBounceTitle);
 
   if (themeBtn) {
     themeBtn.addEventListener("click", () => {
@@ -137,6 +179,7 @@ function init() {
     });
   }
 
+  autoDetectLang();
   bindLangDropdown(".header-lang-dropdown", ".header-lang-trigger", "data-lang-href");
   bindLangDropdown(".footer-lang-dropdown", ".footer-lang-trigger", "data-footer-lang-href");
   bindMobileMenu();
@@ -145,6 +188,21 @@ function init() {
     btn.addEventListener("click", () => {
       const wrap = btn.closest(".card-flip-wrap");
       if (wrap) wrap.classList.toggle("flipped");
+    });
+  });
+
+  document.querySelectorAll(".card-back").forEach((back) => {
+    back.addEventListener("click", (e) => {
+      if (e.target.closest(".card-install-block")) return;
+      if (e.target.closest(".card-flip-btn")) return;
+      e.stopPropagation();
+    });
+  });
+
+  document.addEventListener("click", (e) => {
+    if (e.target.closest(".card-flip-wrap")) return;
+    document.querySelectorAll(".card-flip-wrap.flipped").forEach((wrap) => {
+      wrap.classList.remove("flipped");
     });
   });
 
