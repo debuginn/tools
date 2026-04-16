@@ -296,7 +296,7 @@ downloadBtn.addEventListener("click", function () {
   });
 
   var link = document.createElement("a");
-  link.download = "debuginn-wx-xhs-poster-" + exportWidth + "x" + exportHeight + ".png";
+  link.download = "debuginn-wx-xhs-poster-" + Date.now() + ".png";
 
   if (exportCanvas.toBlob) {
     exportCanvas.toBlob(function (blob) {
