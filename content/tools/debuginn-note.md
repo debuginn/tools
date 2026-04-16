@@ -3,7 +3,7 @@ title: "Noteflow"
 slug: "debuginn-note"
 desc: "Organize and summarize the current conversation into a structured Markdown document, preview it inline, then save to a user-specified directory."
 cardPath: "$ pwd: ~/skills/debuginn-note"
-installCode: "/plugin marketplace add debuginn/skills"
+installCode: "# 1. Add this marketplace\n/plugin marketplace add debuginn/skills\n# 2. Install skill\n/plugin install debuginn-note@debuginn-skills\n# 3. Reload to apply\n/reload-plugins"
 githubRepo: "https://github.com/debuginn/skills"
 buttons: ["install"]
 tags: ["Skill", "Markdown", "Note Export"]
