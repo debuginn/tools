@@ -113,7 +113,19 @@ function drawCenterImage(ctx, width, height, accentColor, image) {
  * @param {number} opts.tracking       — letter spacing in px
  * @param {Object|null} opts.centerImage — browser Image or node-canvas Image
  */
-function drawCover(context, opts) {
+/**
+ * Draw the blog cover onto the given canvas context.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {number} scale              — export scale factor (1 for preview, 2 for export)
+ * @param {Object} opts
+ * @param {string} opts.title          — main title text
+ * @param {string} opts.accentColor    — hex color, e.g. "#3a66ff"
+ * @param {number} opts.glowStrength   — 0-100
+ * @param {number} opts.tracking       — letter spacing in px
+ * @param {Object|null} opts.centerImage — browser Image or node-canvas Image
+ */
+function drawCover(context, scale, opts) {
   var title = (opts.title || "BLOG").trim();
   var accentColor = normalizeHex(opts.accentColor || "#3a66ff");
   var glowStrength = typeof opts.glowStrength === "number" ? opts.glowStrength : 68;
@@ -123,6 +135,7 @@ function drawCover(context, opts) {
   var height = COVER_SIZE.height;
 
   context.save();
+  context.setTransform(scale, 0, 0, scale, 0, 0);
   drawGlowBackground(context, width, height, accentColor, glowStrength);
   drawBackdropText(context, width, height, title, tracking);
   drawCenterImage(context, width, height, accentColor, centerImage);
