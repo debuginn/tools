@@ -89,12 +89,7 @@ function drawCenterImage(ctx, width, height, accentColor, image) {
     var fit = fitContain(image.width, image.height, cardSize, cardSize);
     var drawX = cardX + (cardSize - fit.width) / 2;
     var drawY = cardY + (cardSize - fit.height) / 2;
-    ctx.save();
-    ctx.shadowColor = hexToRgba("#0b1020", 0.22);
-    ctx.shadowBlur = 30;
-    ctx.shadowOffsetY = 18;
     ctx.drawImage(image, drawX, drawY, fit.width, fit.height);
-    ctx.restore();
   }
 
   ctx.strokeStyle = hexToRgba(accentColor, 0.16);
