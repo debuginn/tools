@@ -4,7 +4,7 @@
 
 ## 简介
 
-tools.debuginn.com 是 Debug客栈的在线工具站，提供基于 HTML5 Canvas 的轻量级创意工具。所有工具完全在浏览器端运行，无需后端服务。由 Meng小羽 (@idebuginn) 维护。
+tools.debuginn.com 是 Debug客栈的在线工具站，提供基于 HTML5 Canvas 的轻量级创意工具。所有工具完全在浏览器端运行，无需后端服务。由 Meng小羽 (@xdebuginn) 维护。
 
 - 作者: Meng小羽
 - GitHub: https://github.com/debuginn/tools
